@@ -1,10 +1,19 @@
 # MemoMindAI
 
 > 끄적임은 자유롭게, 정리는 AI가
+>
+> 개인과 기업의 내부 정보를 외부 AI 서비스에 보내지 않고, 내가 통제하는 로컬·내부망 AI로 활용할 수 있습니다.
 
 ## 1. 소개
 
-MemoMindAI는 업무 메모를 구조화하여 저장하고, 로컬 LLM에 자연어로 질문할 수 있는 업무지식·인수인계 도구입니다. 등록한 메모는 JSON 형식으로 저장되며, 앱은 질문과 관련된 메모를 찾아 RAG(검색 증강 생성) 방식으로 답변합니다.
+MemoMindAI는 업무 메모를 구조화하여 저장하고, 로컬 LLM에 자연어로 질문할 수 있는 업무지식·인수인계 도구입니다.
+
+등록한 메모는 JSON 형식으로 저장되며, 앱은 질문과 관련된 메모를 찾아 RAG(검색 증강 생성) 방식으로 답변합니다.
+
+개인 메모와 기업 내부문서를 공개형 클라우드 AI에 업로드할 필요가 없습니다. 노트북 단독 구성에서는 메모 저장부터 AI 추론까지 사용자 PC 안에서 처리하고, 서버·클라이언트 구성에서는 선택된 메모와 질문을 사용자가 지정한 내부망 모델 서버로만 전송합니다. 따라서 조직이 관리하는 장비와 네트워크 안에서 민감한 업무지식을 AI로 검색하고 활용할 수 있습니다.
+
+> [!IMPORTANT]
+> 데이터 보호 범위는 `LLAMACPP_API_URL`에 지정한 모델 서버와 네트워크 구성에 따라 달라집니다. 외부 서버 주소를 지정하거나 내부 API를 공인 인터넷에 노출하면 정보가 통제 범위를 벗어날 수 있으므로, 내부망·VPN·방화벽 등 조직의 보안 정책을 함께 적용해야 합니다.
 
 <p align="center">
   <img src="docs/images/MemoMind_main.gif" alt="MemoMindAI 메인 화면" width="900">
@@ -25,11 +34,11 @@ MemoMindAI는 업무 메모를 구조화하여 저장하고, 로컬 LLM에 자�
 
 ### 어떤 설치 방법을 선택해야 하나요?
 
-| 목적 | 읽을 부분 |
-| --- | --- |
-| 노트북 한 대에서 모델과 앱을 함께 개발·실행 | [2. 개발자 노트북에 설치하는 방법](#2-개발자-노트북에-설치하는-방법) |
-| GPU 서버에서 모델을 실행하고 PC에서 앱만 사용 | [3. 서버·클라이언트 설치 방법](#3-서버클라이언트-설치-방법) |
-| Windows 실행 파일 또는 macOS 앱 제작 | [4. 배포용 프로그램 빌드 방법](#4-배포용-프로그램-빌드-방법) |
+| 목적                                          | 읽을 부분                                                           |
+| --------------------------------------------- | ------------------------------------------------------------------- |
+| 노트북 한 대에서 모델과 앱을 함께 개발·실행  | [2. 개발자 노트북에 설치하는 방법](#2-개발자-노트북에-설치하는-방법) |
+| GPU 서버에서 모델을 실행하고 PC에서 앱만 사용 | [3. 서버·클라이언트 설치 방법](#3-서버클라이언트-설치-방법)         |
+| Windows 실행 파일 또는 macOS 앱 제작          | [4. 배포용 프로그램 빌드 방법](#4-배포용-프로그램-빌드-방법)         |
 
 ### 동작 구조
 
@@ -48,14 +57,14 @@ flowchart LR
 
 코드를 수정할 때는 원하는 기능에 따라 다음 파일부터 확인하면 됩니다.
 
-| 수정하려는 기능 | 먼저 볼 파일 |
-| --- | --- |
-| 화면 구성, 버튼, 다이얼로그 | `src/memomind/ui/app.py` |
-| API 주소, 모델 이름, 데이터·에셋 경로 | `src/memomind/config.py` |
-| 메모 저장·검색·수정·삭제 | `src/memomind/repository.py` |
-| 질문 분류와 검색 컨텍스트 생성 | `src/memomind/context_service.py` |
-| llama.cpp 요청과 스트리밍 응답 | `src/memomind/llm_client.py` |
-| JSON 추출과 인수인계 | `src/memomind/handover.py` |
+| 아키텍처 구분                          | 개발 파일                          |
+| -------------------------------------- | ----------------------------------- |
+| 화면 구성, 버튼, 다이얼로그            | `src/memomind/ui/app.py`          |
+| API 주소, 모델 이름, 데이터·에셋 경로 | `src/memomind/config.py`          |
+| 메모 저장·검색·수정·삭제            | `src/memomind/repository.py`      |
+| 질문 분류와 검색 컨텍스트 생성         | `src/memomind/context_service.py` |
+| llama.cpp 요청과 스트리밍 응답         | `src/memomind/llm_client.py`      |
+| JSON 추출과 인수인계                   | `src/memomind/handover.py`        |
 
 ### 기본 사용 방법
 
@@ -147,7 +156,7 @@ llama-server.exe -hf ggml-org/gemma-4-E2B-it-GGUF:Q4_0 `
   -c 32768 -np 1
 ```
 
-MemoMindAI는 텍스트만 사용하므로 `--no-mmproj`로 이미지용 projector 다운로드를 생략합니다. `--reasoning off`는 모델의 추론 단계를 답변에 노출하지 않도록 설정합니다.
+MemoMindAI는 텍스트만 사용하므로 `--no-mmproj`로 이미지용 projector 다운로드를 생략합니다.`--reasoning off`는 모델의 추론 단계를 답변에 노출하지 않도록 설정합니다.
 
 다른 터미널에서 서버 상태를 확인합니다.
 
@@ -156,23 +165,6 @@ curl http://127.0.0.1:8080/health
 ```
 
 `{"status":"ok"}`가 표시되면 준비가 끝난 것입니다. 모델 로딩 중에는 일시적으로 HTTP 503이 반환될 수 있습니다.
-
-모델 파일을 프로젝트에 직접 저장하려면 다음 방법을 사용할 수 있습니다.
-
-```bash
-python -m pip install -U huggingface_hub
-hf download ggml-org/gemma-4-E2B-it-GGUF \
-  gemma-4-E2B-it-Q4_0.gguf \
-  --local-dir models
-
-llama-server -m models/gemma-4-E2B-it-Q4_0.gguf \
-  --alias gemma-4-e2b-it \
-  --host 127.0.0.1 --port 8080 \
-  --reasoning off \
-  -c 32768 -np 1
-```
-
-Windows에서는 모델 경로를 `models\gemma-4-E2B-it-Q4_0.gguf`로 지정합니다.
 
 ### 2-5. MemoMindAI 실행
 
@@ -300,10 +292,10 @@ python MemoMindAI.py
 
 환경변수는 현재 터미널에만 적용됩니다. 앱을 다시 실행할 때 같은 터미널을 사용하거나 환경변수를 다시 지정하세요.
 
-| 환경변수 | 기본값 | 설명 |
-| --- | --- | --- |
-| `LLAMACPP_API_URL` | `http://127.0.0.1:8080/v1/chat/completions` | llama.cpp OpenAI 호환 채팅 API 주소 |
-| `MODEL_NAME` | `gemma-4-e2b-it` | API 요청에 전달할 모델 이름. 서버의 `--alias`와 일치해야 함 |
+| 환경변수             | 기본값                                        | 설명                                                         |
+| -------------------- | --------------------------------------------- | ------------------------------------------------------------ |
+| `LLAMACPP_API_URL` | `http://127.0.0.1:8080/v1/chat/completions` | llama.cpp OpenAI 호환 채팅 API 주소                          |
+| `MODEL_NAME`       | `gemma-4-e2b-it`                            | API 요청에 전달할 모델 이름. 서버의`--alias`와 일치해야 함 |
 
 ### 3-5. 선택 사항: 여러 GPU에 독립 인스턴스 배치
 
@@ -388,11 +380,11 @@ dist/
 
 배포 프로그램은 앱 업데이트나 재설치 중 데이터가 사라지지 않도록 실행 파일 내부가 아닌 사용자 데이터 폴더에 메모를 저장합니다.
 
-| 실행 환경 | 메모 파일 위치 |
-| --- | --- |
-| 소스 코드 실행 | `프로젝트/memoAI/individual_data.json` |
-| Windows 배포 프로그램 | `%LOCALAPPDATA%\MemoMindAI\memoAI\individual_data.json` |
-| macOS 배포 프로그램 | `~/Library/Application Support/MemoMindAI/memoAI/individual_data.json` |
+| 실행 환경             | 메모 파일 위치                                                           |
+| --------------------- | ------------------------------------------------------------------------ |
+| 소스 코드 실행        | `프로젝트/memoAI/individual_data.json`                                 |
+| Windows 배포 프로그램 | `%LOCALAPPDATA%\MemoMindAI\memoAI\individual_data.json`                |
+| macOS 배포 프로그램   | `~/Library/Application Support/MemoMindAI/memoAI/individual_data.json` |
 
 ### 4-4. 참고 자료
 
