@@ -16,3 +16,11 @@ Thumbs.db
 # 개인메모 및 백업폴더
 memoAI/
 backup/
+build/
+dist/
+
+# 빌드파일 제외
+*.spec
+# 2. 하지만 MemoMindAI.spec 파일은 제외 대상에서 빼기 (추적 허용)
+!MemoMindAI.spec
+generated-*

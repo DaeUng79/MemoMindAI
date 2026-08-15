@@ -54,7 +54,7 @@ def main(page: ft.Page, settings: Settings | None = None):
     page.padding = 20
     page.window.height = 700
     page.window.min_height = 700
-    page.window.icon = "assets/yang.ico" 
+    # page.window.icon = "assets/yang.ico" 
     page.update()
     # Flet 이벤트 핸들러는 작업 스레드에서 실행될 수 있으므로 Tkinter 파일
     # 선택창을 만들면(특히 macOS) 앱이 중단될 수 있다. Flet 네이티브 서비스를

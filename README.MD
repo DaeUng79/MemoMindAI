@@ -209,7 +209,50 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## 4. 노트북에서 모델과 서비스 실행
+## 4. 실행 파일 빌드
+
+프로젝트 루트에서 가상환경을 활성화한 뒤 운영체제에 맞는 명령을 실행합니다.
+
+### Windows
+
+```powershell
+.venv\Scripts\activate
+
+Remove-Item -Recurse -Force build, dist -ErrorAction SilentlyContinue
+
+flet pack .\MemoMindAI.py --icon assets\yang.ico --add-data "assets:assets" --pyinstaller-build-args="--paths=src" --name "MemoMind_v1.0"
+```
+
+빌드가 완료되면 다음 경로에 실행 파일이 생성됩니다.
+
+```text
+dist/
+└── MemoMind_v1.0.exe
+```
+
+### macOS
+
+```bash
+source .venv/bin/activate
+
+rm -rf build dist
+
+flet pack ./MemoMindAI.py \
+  --icon assets/yang.ico \
+  --add-data "assets:assets" \
+  --pyinstaller-build-args="--paths=src" \
+  --bundle-id "com.memomind.ai" \
+  --name "MemoMind_v1.0"
+```
+
+빌드가 완료되면 다음 경로에 앱 번들이 생성됩니다.
+
+```text
+dist/
+└── MemoMind_v1.0.app
+```
+
+## 5. 노트북에서 모델과 서비스 실행
 
 모델 서버와 MemoMindAI 앱을 서로 다른 터미널에서 실행합니다.
 
@@ -253,7 +296,7 @@ python MemoMindAI.py
 
 앱은 기본적으로 로컬의 `127.0.0.1:8080` 서버에 연결하므로 별도 설정이 필요하지 않습니다.
 
-## 5. 서버에서 모델 구동, 클라이언트에서 앱 실행
+## 6. 서버에서 모델 구동, 클라이언트에서 앱 실행
 
 ### 구성
 
