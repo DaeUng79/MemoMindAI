@@ -67,6 +67,7 @@ flowchart LR
 
 > [!IMPORTANT]
 > 소스 코드로 실행할 때 메모는 프로젝트의 `memoAI/individual_data.json`에 저장됩니다.
+>
 > 이 파일에는 실제 업무 내용이 들어가므로 GitHub에 커밋하지 말고 별도로 백업·보호하세요.
 
 ### 어떤 설치 방법을 선택해야 하나요?
@@ -76,7 +77,7 @@ flowchart LR
 | 노트북 한 대에서 모델과 앱을 함께 개발·실행  | [2. 개발자 노트북에 설치하는 방법](#2-개발자-노트북에-설치하는-방법) |
 | GPU 서버에서 모델을 실행하고 PC에서 앱만 사용 | [3. 서버·클라이언트 설치 방법](#3-서버클라이언트-설치-방법)         |
 | Windows 실행 파일 또는 macOS 앱 제작          | [4. 배포용 프로그램 빌드 방법](#4-배포용-프로그램-빌드-방법)         |
-| 서버 주소, 모델 또는 아이콘 변경               | [5. 속성 변경 방법](#5-속성-변경-방법)                               |
+| 서버 주소, 모델 또는 아이콘 변경              | [5. 속성 변경 방법](#5-속성-변경-방법)                               |
 
 ## 2. 개발자 노트북에 설치하는 방법
 
@@ -251,6 +252,68 @@ CPU 전용 서버라면 CMake 구성 명령에서 `-DGGML_CUDA=ON`을 제외합�
 curl http://<내부망_IP>:8080/health
 ```
 
+#### Rocky Linux 10.1 서버 운영 예시
+
+다음은 Rocky Linux 10.1과 NVIDIA GPU 환경에서 실제로 사용한 명령입니다. 아래 경로는 사용자 계정 `odw0902`를 기준으로 하므로 다른 서버에서는 계정명과 `llama.cpp_new` 설치 경로를 실제 환경에 맞게 변경합니다.
+
+모델을 저장할 폴더로 이동한 뒤 GGUF 파일을 다운로드합니다.
+
+```bash
+cd /home/계정이름/llama.cpp_new/models
+wget -O gemma-4-E2B-it-Q4_K_M.gguf "https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF/resolve/main/gemma-4-E2B-it-Q4_K_M.gguf?download=true"
+```
+
+빌드된 실행 파일 폴더로 이동하여 서버를 백그라운드로 실행합니다.
+
+```bash
+cd /home/계정이름/llama.cpp_new/build/bin
+nohup ./llama-server -m /home/odw0902/llama.cpp_new/models/gemma-4-E2B-it-Q4_K_M.gguf -ngl 99 -np 4 -cb --reasoning off --host 0.0.0.0 --port 8081 > llama.log 2>&1 &
+```
+
+주요 옵션은 다음과 같습니다.
+
+| 옵션                   | 설명                                                       |
+| ---------------------- | ---------------------------------------------------------- |
+| `-m`                 | 실행할 GGUF 모델 파일의 절대 경로                          |
+| `-ngl 99`            | 최대 99개 모델 레이어를 GPU에 배치                         |
+| `-np 4`              | 병렬 요청 처리 슬롯을 4개로 설정                           |
+| `-cb`                | 연속 배치(continuous batching) 활성화                      |
+| `--reasoning off`    | 답변에 추론 단계가 노출되지 않도록 설정                    |
+| `--host 0.0.0.0`     | 서버의 모든 네트워크 인터페이스에서 요청 수신              |
+| `--port 8081`        | API 수신 포트를 8081로 설정                                |
+| `> llama.log 2>&1 &` | 표준 출력과 오류를`llama.log`에 기록하고 백그라운드 실행 |
+
+서버 운영 상태는 다음 명령으로 확인하거나 제어합니다.
+
+```bash
+# llama-server 프로세스 상태 확인
+ps -ef | grep llama-server
+
+# llama-server 서비스 종료
+pkill -f llama-server
+
+# NVIDIA GPU 사용량을 1초 간격으로 확인
+watch -n 1 nvidia-smi
+
+# 서버 로그 실시간 확인
+tail -f llama.log
+```
+
+> [!CAUTION]
+> `pkill -f llama-server`는 이름이 일치하는 모든 llama-server 프로세스를 종료합니다. 
+>
+> 여러 모델 인스턴스를 운영 중이라면 `ps -ef`로 PID를 확인한 뒤 종료할 프로세스만 지정하세요.
+
+이 예시는 8081 포트를 사용하므로 클라이언트에서는 다음과 같이 API 주소를 지정합니다.
+
+```bash
+export LLAMACPP_API_URL="http://<Rocky_Linux_서버_IP>:8081/v1/chat/completions"
+export MODEL_NAME="gemma-4-e2b-it"
+python MemoMindAI.py
+```
+
+모델 이름을 명확하게 고정하려면 서버 구동 명령에 `--alias gemma-4-e2b-it`를 추가하고, 클라이언트의 `MODEL_NAME`도 같은 값으로 지정합니다.
+
 ### 3-3. 클라이언트에 MemoMindAI 설치
 
 클라이언트 PC에 프로젝트를 내려받거나 복사한 뒤 Python 가상환경과 앱 의존성만 설치합니다.
@@ -407,27 +470,7 @@ dist/
 
 `DEFAULT_API_URL`은 MemoMindAI 클라이언트가 접속할 llama.cpp 서버 주소입니다. 서버의 수신 주소를 변경하는 설정이 아니므로, 서버에서는 별도로 `--host`와 `--port` 옵션을 지정해야 합니다.
 
-#### 방법 A: 환경변수로 변경
-
-소스를 수정하지 않는 권장 방법입니다. `<내부망_IP>`를 실제 모델 서버 IP로 바꿉니다.
-
-Windows PowerShell:
-
-```powershell
-$env:LLAMACPP_API_URL="http://<내부망_IP>:8080/v1/chat/completions"
-python .\MemoMindAI.py
-```
-
-macOS·Linux:
-
-```bash
-export LLAMACPP_API_URL="http://<내부망_IP>:8080/v1/chat/completions"
-python MemoMindAI.py
-```
-
-환경변수는 현재 터미널에만 적용됩니다.
-
-#### 방법 B: 소스의 기본값 변경
+#### 소스의 기본값 변경
 
 `src/memomind/config.py`에서 다음 상수를 변경합니다.
 
@@ -439,7 +482,9 @@ DEFAULT_API_URL = "http://192.168.0.20:8080/v1/chat/completions"
 
 ### 5-2. 다른 모델 사용 시 기본 모델 이름 변경
 
-`DEFAULT_MODEL_NAME`은 MemoMindAI가 API 요청에 담아 보내는 모델 이름입니다. 실제로 불러올 모델은 llama.cpp 서버 실행 명령의 `-hf` 또는 `-m` 옵션으로 선택하고, 서버의 `--alias`와 MemoMindAI의 모델 이름을 동일하게 맞춥니다.
+`DEFAULT_MODEL_NAME`은 MemoMindAI가 API 요청에 담아 보내는 모델 이름입니다. 
+
+실제로 불러올 모델은 llama.cpp 서버 실행 명령의 `-hf` 또는 `-m` 옵션으로 선택하고, 서버의 `--alias`와 MemoMindAI의 모델 이름을 동일하게 맞춥니다.
 
 예를 들어 서버에서 모델 별칭을 `my-model`로 지정했다면 다음과 같이 실행합니다.
 
@@ -449,22 +494,6 @@ llama-server -m models/my-model.gguf \
   --host 0.0.0.0 --port 8080
 ```
 
-소스를 수정하지 않고 사용할 때:
-
-Windows PowerShell:
-
-```powershell
-$env:MODEL_NAME="my-model"
-python .\MemoMindAI.py
-```
-
-macOS·Linux:
-
-```bash
-export MODEL_NAME="my-model"
-python MemoMindAI.py
-```
-
 배포 프로그램의 기본 모델로 지정하려면 `src/memomind/config.py`를 수정하고 다시 빌드합니다.
 
 ```python
@@ -472,19 +501,21 @@ DEFAULT_MODEL_NAME = "my-model"
 ```
 
 > [!IMPORTANT]
-> `DEFAULT_MODEL_NAME`만 변경해도 모델 파일이 자동으로 교체되지는 않습니다. llama.cpp 서버에서 사용할 모델과 `--alias`를 함께 변경해야 합니다.
+> `DEFAULT_MODEL_NAME`만 변경해도 모델 파일이 자동으로 교체되지는 않습니다.
+>
+>  llama.cpp 서버에서 사용할 모델과 `--alias`를 함께 변경해야 합니다.
 
 ### 5-3. 앱과 채팅 아이콘 변경
 
 현재 아이콘과 이미지의 사용 위치는 다음과 같습니다.
 
-| 용도 | 현재 파일 | 변경 위치 |
-| --- | --- | --- |
-| 앱 창 아이콘 | `assets/yang.ico` | `src/memomind/ui/app.py`의 `page.window.icon` |
-| Windows 배포 파일 아이콘 | `assets/yang.ico` | Windows 빌드 명령의 `--icon` |
-| macOS 배포 앱 아이콘 | `assets/yang.ico` | macOS 빌드 명령의 `--icon` |
-| 채팅 사용자 아이콘 | `assets/yang.png` | `src/memomind/ui/app.py`의 `user_avatar_url` |
-| 채팅 AI 아이콘 | `assets/korea.png` | `src/memomind/ui/app.py`의 `ai_avatar_url` |
+| 용도                     | 현재 파일            | 변경 위치                                         |
+| ------------------------ | -------------------- | ------------------------------------------------- |
+| 앱 창 아이콘             | `assets/yang.ico`  | `src/memomind/ui/app.py`의 `page.window.icon` |
+| Windows 배포 파일 아이콘 | `assets/yang.ico`  | Windows 빌드 명령의`--icon`                     |
+| macOS 배포 앱 아이콘     | `assets/yang.ico`  | macOS 빌드 명령의`--icon`                       |
+| 채팅 사용자 아이콘       | `assets/yang.png`  | `src/memomind/ui/app.py`의 `user_avatar_url`  |
+| 채팅 AI 아이콘           | `assets/korea.png` | `src/memomind/ui/app.py`의 `ai_avatar_url`    |
 
 기존 파일명을 유지하면서 이미지만 교체하면 소스 수정 없이 적용할 수 있습니다. 파일명을 변경할 때는 새 이미지 파일을 `assets` 폴더에 넣고 다음 항목을 함께 수정합니다.
 
