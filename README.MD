@@ -13,7 +13,7 @@ MemoMindAI는 업무 메모를 구조화하여 저장하고, 로컬 LLM에 자�
 개인 메모와 기업 내부문서를 공개형 클라우드 AI에 업로드할 필요가 없습니다. 노트북 단독 구성에서는 메모 저장부터 AI 추론까지 사용자 PC 안에서 처리하고, 서버·클라이언트 구성에서는 선택된 메모와 질문을 사용자가 지정한 내부망 모델 서버로만 전송합니다. 따라서 조직이 관리하는 장비와 네트워크 안에서 민감한 업무지식을 AI로 검색하고 활용할 수 있습니다.
 
 > [!IMPORTANT]
-> 데이터 보호 범위는 `LLAMACPP_API_URL`에 지정한 모델 서버와 네트워크 구성에 따라 달라집니다. 외부 서버 주소를 지정하거나 내부 API를 공인 인터넷에 노출하면 정보가 통제 범위를 벗어날 수 있으므로, 내부망·VPN·방화벽 등 조직의 보안 정책을 함께 적용해야 합니다.
+> 데이터 보호 범위는  코드내`LLAMACPP_API_URL` 변수에 지정한 모델 서버와 네트워크 구성에 따라 달라집니다. "외부 클라우드 서버"를 이용하거나 "내부 API를 공인 인터넷에 노출"하면 정보가 통제 범위를 벗어날 수 있으므로, 서버와 클라이언트 간 조직의 보안 정책을 고려하여 운영해야 합니다.
 
 <p align="center">
   <img src="docs/images/MemoMind_main.gif" alt="MemoMindAI 메인 화면" width="900">
@@ -26,19 +26,10 @@ MemoMindAI는 업무 메모를 구조화하여 저장하고, 로컬 LLM에 자�
 - 답변 스트리밍, 대화 초기화, 라이트·다크 모드
 - 업무유형별 또는 전체 메모를 JSON으로 추출
 - 전달받은 JSON의 중복을 확인한 뒤 등록하는 인수인계
-- 개발자 노트북 단독 실행과 내부 서버–클라이언트 분리 실행
 
 | 메모 등록·수정                                                  | 메모 추출·인수인계                                      |
 | ---------------------------------------------------------------- | -------------------------------------------------------- |
 | ![메모 등록과 수정](docs/images/MemoMind_memo_register_edit.gif) | ![메모 인수인계](docs/images/MemoMind_memo_handover.gif) |
-
-### 어떤 설치 방법을 선택해야 하나요?
-
-| 목적                                          | 읽을 부분                                                           |
-| --------------------------------------------- | ------------------------------------------------------------------- |
-| 노트북 한 대에서 모델과 앱을 함께 개발·실행  | [2. 개발자 노트북에 설치하는 방법](#2-개발자-노트북에-설치하는-방법) |
-| GPU 서버에서 모델을 실행하고 PC에서 앱만 사용 | [3. 서버·클라이언트 설치 방법](#3-서버클라이언트-설치-방법)         |
-| Windows 실행 파일 또는 macOS 앱 제작          | [4. 배포용 프로그램 빌드 방법](#4-배포용-프로그램-빌드-방법)         |
 
 ### 동작 구조
 
@@ -74,11 +65,24 @@ flowchart LR
 4. **인수인계** 메뉴에서 선택 업무 또는 전체 메모를 JSON으로 추출합니다.
 5. 후임자는 **받은 메모 등록**에서 전달받은 JSON 파일을 불러옵니다.
 
-소스 코드로 실행할 때 메모는 프로젝트의 `memoAI/individual_data.json`에 저장됩니다. 이 파일에는 실제 업무 내용이 들어가므로 GitHub에 커밋하지 말고 별도로 백업·보호하세요.
+> [!IMPORTANT]
+> 소스 코드로 실행할 때 메모는 프로젝트의 `memoAI/individual_data.json`에 저장됩니다.
+> 이 파일에는 실제 업무 내용이 들어가므로 GitHub에 커밋하지 말고 별도로 백업·보호하세요.
+
+### 어떤 설치 방법을 선택해야 하나요?
+
+| 목적                                          | 읽을 부분                                                           |
+| --------------------------------------------- | ------------------------------------------------------------------- |
+| 노트북 한 대에서 모델과 앱을 함께 개발·실행  | [2. 개발자 노트북에 설치하는 방법](#2-개발자-노트북에-설치하는-방법) |
+| GPU 서버에서 모델을 실행하고 PC에서 앱만 사용 | [3. 서버·클라이언트 설치 방법](#3-서버클라이언트-설치-방법)         |
+| Windows 실행 파일 또는 macOS 앱 제작          | [4. 배포용 프로그램 빌드 방법](#4-배포용-프로그램-빌드-방법)         |
+| 서버 주소, 모델 또는 아이콘 변경               | [5. 속성 변경 방법](#5-속성-변경-방법)                               |
 
 ## 2. 개발자 노트북에 설치하는 방법
 
-이 구성은 노트북 한 대에서 `llama.cpp` 모델 서버와 MemoMindAI 앱을 함께 실행합니다. 모델 서버와 앱은 각각 별도의 터미널에서 실행해야 합니다.
+이 구성은 노트북 한 대에서 `llama.cpp` 모델 서버와 MemoMindAI 앱을 함께 실행합니다.
+
+모델 서버와 앱은 각각 별도의 터미널에서 실행해야 합니다.
 
 ### 2-1. 준비 사항
 
@@ -394,3 +398,128 @@ dist/
 - [llama.cpp HTTP 서버 안내](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)
 - [Gemma 4 E2B IT GGUF 모델](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF)
 - [Hugging Face CLI 다운로드 안내](https://huggingface.co/docs/huggingface_hub/en/guides/cli)
+
+## 5. 속성 변경 방법
+
+기본 설정은 `src/memomind/config.py`, 화면과 채팅 아이콘은 `src/memomind/ui/app.py`에서 관리합니다. 환경변수를 사용하면 소스 코드를 수정하지 않고 현재 터미널에서만 설정을 바꿀 수 있습니다. 변경값을 배포 프로그램의 기본값으로 적용하려면 소스를 수정한 뒤 프로그램을 다시 빌드해야 합니다.
+
+### 5-1. 서버 운영 시 기본 API 주소 변경
+
+`DEFAULT_API_URL`은 MemoMindAI 클라이언트가 접속할 llama.cpp 서버 주소입니다. 서버의 수신 주소를 변경하는 설정이 아니므로, 서버에서는 별도로 `--host`와 `--port` 옵션을 지정해야 합니다.
+
+#### 방법 A: 환경변수로 변경
+
+소스를 수정하지 않는 권장 방법입니다. `<내부망_IP>`를 실제 모델 서버 IP로 바꿉니다.
+
+Windows PowerShell:
+
+```powershell
+$env:LLAMACPP_API_URL="http://<내부망_IP>:8080/v1/chat/completions"
+python .\MemoMindAI.py
+```
+
+macOS·Linux:
+
+```bash
+export LLAMACPP_API_URL="http://<내부망_IP>:8080/v1/chat/completions"
+python MemoMindAI.py
+```
+
+환경변수는 현재 터미널에만 적용됩니다.
+
+#### 방법 B: 소스의 기본값 변경
+
+`src/memomind/config.py`에서 다음 상수를 변경합니다.
+
+```python
+DEFAULT_API_URL = "http://192.168.0.20:8080/v1/chat/completions"
+```
+
+주소에는 llama.cpp의 OpenAI 호환 엔드포인트인 `/v1/chat/completions`까지 포함해야 합니다. 배포 프로그램에 적용하려면 [4. 배포용 프로그램 빌드 방법](#4-배포용-프로그램-빌드-방법)에 따라 다시 빌드합니다.
+
+### 5-2. 다른 모델 사용 시 기본 모델 이름 변경
+
+`DEFAULT_MODEL_NAME`은 MemoMindAI가 API 요청에 담아 보내는 모델 이름입니다. 실제로 불러올 모델은 llama.cpp 서버 실행 명령의 `-hf` 또는 `-m` 옵션으로 선택하고, 서버의 `--alias`와 MemoMindAI의 모델 이름을 동일하게 맞춥니다.
+
+예를 들어 서버에서 모델 별칭을 `my-model`로 지정했다면 다음과 같이 실행합니다.
+
+```bash
+llama-server -m models/my-model.gguf \
+  --alias my-model \
+  --host 0.0.0.0 --port 8080
+```
+
+소스를 수정하지 않고 사용할 때:
+
+Windows PowerShell:
+
+```powershell
+$env:MODEL_NAME="my-model"
+python .\MemoMindAI.py
+```
+
+macOS·Linux:
+
+```bash
+export MODEL_NAME="my-model"
+python MemoMindAI.py
+```
+
+배포 프로그램의 기본 모델로 지정하려면 `src/memomind/config.py`를 수정하고 다시 빌드합니다.
+
+```python
+DEFAULT_MODEL_NAME = "my-model"
+```
+
+> [!IMPORTANT]
+> `DEFAULT_MODEL_NAME`만 변경해도 모델 파일이 자동으로 교체되지는 않습니다. llama.cpp 서버에서 사용할 모델과 `--alias`를 함께 변경해야 합니다.
+
+### 5-3. 앱과 채팅 아이콘 변경
+
+현재 아이콘과 이미지의 사용 위치는 다음과 같습니다.
+
+| 용도 | 현재 파일 | 변경 위치 |
+| --- | --- | --- |
+| 앱 창 아이콘 | `assets/yang.ico` | `src/memomind/ui/app.py`의 `page.window.icon` |
+| Windows 배포 파일 아이콘 | `assets/yang.ico` | Windows 빌드 명령의 `--icon` |
+| macOS 배포 앱 아이콘 | `assets/yang.ico` | macOS 빌드 명령의 `--icon` |
+| 채팅 사용자 아이콘 | `assets/yang.png` | `src/memomind/ui/app.py`의 `user_avatar_url` |
+| 채팅 AI 아이콘 | `assets/korea.png` | `src/memomind/ui/app.py`의 `ai_avatar_url` |
+
+기존 파일명을 유지하면서 이미지만 교체하면 소스 수정 없이 적용할 수 있습니다. 파일명을 변경할 때는 새 이미지 파일을 `assets` 폴더에 넣고 다음 항목을 함께 수정합니다.
+
+앱 창 아이콘:
+
+```python
+page.window.icon = "assets/new_app.ico"
+```
+
+채팅 사용자·AI 아이콘:
+
+```python
+user_avatar_url = "/new_user.png"
+ai_avatar_url = "/new_ai.png"
+```
+
+채팅 아이콘 경로의 `/`는 `assets` 폴더를 기준으로 하므로 `/new_user.png`는 `assets/new_user.png` 파일을 의미합니다.
+
+배포 파일 아이콘도 바꾸려면 빌드 명령의 `--icon` 경로를 함께 변경합니다.
+
+Windows:
+
+```powershell
+flet pack .\MemoMindAI.py --icon assets\new_app.ico --add-data "assets:assets" --pyinstaller-build-args="--paths=src" --name "MemoMind_v1.0"
+```
+
+macOS에서는 `.icns` 파일 사용을 권장합니다.
+
+```bash
+flet pack ./MemoMindAI.py \
+  --icon assets/new_app.icns \
+  --add-data "assets:assets" \
+  --pyinstaller-build-args="--paths=src" \
+  --bundle-id "com.memomind.ai" \
+  --name "MemoMind_v1.0"
+```
+
+`--add-data "assets:assets"`가 `assets` 폴더 전체를 포함하므로 이미지 파일을 추가해도 이 옵션은 변경하지 않습니다. 소스 실행 중이라면 앱을 재시작하고, 기존 배포 프로그램이라면 새 아이콘을 포함하여 다시 빌드해야 합니다.
