@@ -24,16 +24,6 @@ from ..llm_client import LLMClient
 from ..logging_utils import EventLogger
 from ..repository import MemoRepository
 
-
-# ---------------------------------------------------------------------
-# exe 만들기 (윈도우기준)
-# pip install pyinstaller 설치
-# pip install Pillow 아이콘 반영을 위해  https://icon-icons.com/ko/packs-of-icons
-# pyinstaller --onefile --windowed --add-data "assets;assets" LocallLLM_flet_chat_basic.py
-# pyinstaller --onefile --windowed --icon=ai.ico --add-data "assets;assets" LocallLLM_flet_chat_basic.py
-# flet pack .\LocallLLM_flet_chat_basic.py --icon assets/yang_2.ico --add-data "assets;assets" --name "MemoMind_v2.0"
-# ---------------------------------------------------------------------
-
 # ---------------------------------------------------------------------
 # AI모델 설정(맥북용)
 # ---------------------------------------------------------------------
@@ -54,7 +44,7 @@ def main(page: ft.Page, settings: Settings | None = None):
     page.padding = 20
     page.window.height = 700
     page.window.min_height = 700
-    # page.window.icon = "assets/yang.ico" 
+    page.window.icon = "assets/yang.ico" 
     page.update()
     # Flet 이벤트 핸들러는 작업 스레드에서 실행될 수 있으므로 Tkinter 파일
     # 선택창을 만들면(특히 macOS) 앱이 중단될 수 있다. Flet 네이티브 서비스를
