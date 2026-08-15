@@ -1,0 +1,18 @@
+# 가상환경 무시
+.venv/
+.flet/
+venv/
+env/
+myenv/
+
+# 파이썬 캐시 무시
+__pycache__/
+*.pyc
+
+# (선택) 운영체제 임시 파일 무시
+.DS_Store
+Thumbs.db
+
+# 개인메모 및 백업폴더
+memoAI/
+backup/

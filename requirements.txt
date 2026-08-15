@@ -1,0 +1,6 @@
+# MemoMindAI.py 실행용 의존성
+# 설치: pip install -r requirements.txt
+
+tinydb>=4.8.0
+flet>=0.25.0
+httpx>=0.27.0

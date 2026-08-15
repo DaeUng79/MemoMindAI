@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2026 전문인재 개인 프로젝트 1차 MemoMind 결과보고서">
+  <title>MemoMind 결과보고서 | 2026 전문인재 개인 프로젝트 1차</title>
+  <style>
+    :root {
+      --navy: #10263f;
+      --navy-2: #193b60;
+      --blue: #1769e0;
+      --cyan: #14a6b8;
+      --green: #16845b;
+      --amber: #b56b08;
+      --red: #c44545;
+      --ink: #172536;
+      --muted: #617083;
+      --line: #d9e1ea;
+      --soft: #f4f7fa;
+      --paper: #ffffff;
+      --shadow: 0 14px 40px rgba(17, 38, 63, .09);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+      line-height: 1.7;
+      background: #edf2f6;
+      word-break: keep-all;
+    }
+    button, input { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid rgba(23, 105, 224, .35); outline-offset: 3px; }
+
+    .progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      width: 0;
+      height: 4px;
+      z-index: 100;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(217, 225, 234, .9);
+      background: rgba(255, 255, 255, .94);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-inner {
+      width: min(1180px, calc(100% - 32px));
+      min-height: 62px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; color: var(--navy); }
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      border-radius: 10px;
+      background: linear-gradient(140deg, var(--blue), var(--cyan));
+      box-shadow: 0 8px 18px rgba(23, 105, 224, .25);
+    }
+    .nav { display: flex; align-items: center; gap: 2px; }
+    .nav a {
+      padding: 9px 10px;
+      color: var(--muted);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .nav a:hover, .nav a.active { color: var(--blue); background: #eef5ff; }
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--navy);
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .btn:hover { border-color: #9fb0c3; transform: translateY(-1px); }
+    .btn.primary { color: #fff; border-color: var(--blue); background: var(--blue); }
+
+    .cover {
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(20, 166, 184, .34), transparent 26%),
+        radial-gradient(circle at 12% 88%, rgba(23, 105, 224, .35), transparent 30%),
+        linear-gradient(135deg, #0c1d31 0%, #153b61 72%, #115c72 100%);
+    }
+    .cover::after {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      right: -230px;
+      top: -230px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 50%;
+      box-shadow: 0 0 0 70px rgba(255,255,255,.025), 0 0 0 140px rgba(255,255,255,.02);
+    }
+    .cover-inner {
+      width: min(1120px, calc(100% - 32px));
+      min-height: 590px;
+      margin: 0 auto;
+      padding: 92px 0 72px;
+      display: grid;
+      grid-template-columns: 1.35fr .65fr;
+      align-items: end;
+      gap: 70px;
+      position: relative;
+      z-index: 1;
+    }
+    .kicker { margin: 0 0 18px; color: #98e7ef; font-size: 14px; font-weight: 850; letter-spacing: .08em; }
+    .cover h1 { margin: 0; font-size: clamp(44px, 7vw, 82px); line-height: 1.02; letter-spacing: -.045em; }
+    .cover h1 span { display: block; margin-top: 12px; color: #b7f0f4; font-size: .42em; letter-spacing: -.01em; }
+    .lead { max-width: 690px; margin: 28px 0 0; color: rgba(255,255,255,.85); font-size: clamp(18px, 2.2vw, 23px); }
+    .cover-meta { display: grid; gap: 1px; border: 1px solid rgba(255,255,255,.2); border-radius: 14px; overflow: hidden; background: rgba(255,255,255,.06); }
+    .meta-row { padding: 15px 17px; background: rgba(6,18,31,.18); }
+    .meta-row small { display: block; color: #9fc8dd; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .meta-row strong { display: block; margin-top: 3px; font-size: 15px; }
+
+    main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+    .section { padding: 76px 0 10px; scroll-margin-top: 72px; }
+    .section-head { display: grid; grid-template-columns: 120px 1fr; gap: 22px; margin-bottom: 30px; }
+    .section-no { color: var(--blue); font-size: 13px; font-weight: 900; letter-spacing: .08em; }
+    .section h2 { margin: 0; color: var(--navy); font-size: clamp(28px, 4vw, 43px); line-height: 1.2; letter-spacing: -.035em; }
+    .section-desc { max-width: 760px; margin: 11px 0 0; color: var(--muted); }
+
+    .verdict {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      padding: 30px;
+      border: 1px solid #b9cce0;
+      border-left: 6px solid var(--blue);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .verdict-label { color: var(--blue); font-size: 12px; font-weight: 900; letter-spacing: .09em; }
+    .verdict h3 { margin: 4px 0 7px; color: var(--navy); font-size: 25px; line-height: 1.3; }
+    .verdict p { margin: 0; color: var(--muted); }
+    .stamp {
+      width: 128px;
+      height: 128px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--blue);
+      border: 4px double var(--blue);
+      border-radius: 50%;
+      font-size: 15px;
+      font-weight: 900;
+      transform: rotate(-5deg);
+    }
+    .verdict {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+    .metric { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .metric .value { color: var(--navy); font-size: 33px; line-height: 1; font-weight: 900; letter-spacing: -.04em; }
+    .metric .unit { margin-left: 3px; color: var(--blue); font-size: 14px; font-weight: 900; }
+    .metric .label { margin-top: 9px; color: var(--muted); font-size: 13px; }
+    .metric small { display: block; margin-top: 7px; color: #8b98a8; font-size: 11px; }
+
+    .card { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; box-shadow: 0 8px 22px rgba(17,38,63,.045); }
+    .card-pad { padding: 26px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card h3 { margin: 0 0 8px; color: var(--navy); font-size: 19px; }
+    .card p { margin: 0; color: var(--muted); }
+    .eyebrow { display: block; margin-bottom: 9px; color: var(--blue); font-size: 11px; font-weight: 900; letter-spacing: .08em; }
+    ul.clean { margin: 14px 0 0; padding: 0; list-style: none; }
+    ul.clean li { position: relative; margin: 8px 0; padding-left: 18px; color: #435369; }
+    ul.clean li::before { content: ""; position: absolute; left: 1px; top: .72em; width: 6px; height: 6px; border-radius: 2px; background: var(--cyan); }
+
+    .persona { display: grid; grid-template-columns: 92px 1fr; gap: 22px; align-items: center; }
+    .persona-icon { width: 92px; height: 92px; display: grid; place-items: center; border-radius: 22px; color: #fff; background: linear-gradient(145deg, var(--blue), var(--cyan)); font-size: 34px; font-weight: 900; }
+    .quote { margin-top: 20px; padding: 20px 22px; border-radius: 11px; color: var(--navy); background: #eef5ff; font-size: 17px; font-weight: 750; }
+    .caution { margin-top: 14px; padding: 16px 18px; border: 1px solid #ead6ac; border-radius: 10px; color: #765018; background: #fff9ed; font-size: 13px; }
+
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; align-items: stretch; }
+    .flow-step { position: relative; padding: 20px 16px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .flow-step:not(:last-child)::after { content: "→"; position: absolute; right: -17px; top: 50%; z-index: 2; width: 24px; color: var(--blue); text-align: center; font-weight: 900; transform: translateY(-50%); }
+    .flow-step b { display: block; color: var(--navy); font-size: 15px; }
+    .flow-step span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .flow-num { width: 27px; height: 27px; display: grid; place-items: center; margin-bottom: 12px; border-radius: 8px; color: #fff; background: var(--blue); font-size: 12px; font-weight: 900; }
+
+    .manual-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .manual-card { overflow: hidden; }
+    .manual-card-head { padding: 25px 26px 20px; border-bottom: 1px solid var(--line); }
+    .manual-card-head h3 { margin-bottom: 5px; }
+    .manual-steps { display: grid; gap: 0; padding: 4px 26px 10px; counter-reset: manual-step; }
+    .manual-step { position: relative; min-height: 68px; padding: 17px 0 17px 46px; border-bottom: 1px solid #e8edf2; counter-increment: manual-step; }
+    .manual-step:last-child { border-bottom: 0; }
+    .manual-step::before { content: counter(manual-step); position: absolute; left: 0; top: 17px; width: 29px; height: 29px; display: grid; place-items: center; color: #fff; border-radius: 8px; background: var(--blue); font-size: 12px; font-weight: 900; }
+    .manual-step b { display: block; color: var(--navy); font-size: 15px; }
+    .manual-step span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .gif-placeholder { position: relative; min-height: 270px; margin: 0 26px 26px; overflow: hidden; border: 1px dashed #9fb5cc; border-radius: 12px; background: #f3f7fb; }
+    .gif-placeholder img { width: 100%; height: auto; display: block; }
+    .gif-placeholder-message { min-height: 270px; display: none; place-items: center; padding: 28px; color: var(--muted); text-align: center; }
+    .gif-placeholder.is-placeholder .gif-placeholder-message { display: grid; }
+    .gif-placeholder-message b { display: block; margin-bottom: 6px; color: var(--navy); font-size: 15px; }
+    .gif-placeholder-message code { color: var(--blue); font-size: 12px; word-break: break-all; }
+
+    .feature-list { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fff; }
+    .feature-item { display: grid; grid-template-columns: 34px 1fr; gap: 14px; padding: 22px; border-bottom: 1px solid var(--line); }
+    .feature-item:nth-child(odd) { border-right: 1px solid var(--line); }
+    .feature-item:nth-last-child(-n+2) { border-bottom: 0; }
+    .feature-icon { width: 34px; height: 34px; display: grid; place-items: center; color: var(--blue); border-radius: 9px; background: #eaf3ff; font-weight: 900; }
+    .feature-item b { display: block; color: var(--navy); }
+    .feature-item span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+
+    .architecture { padding: 28px; overflow-x: auto; }
+    .arch-row { min-width: 760px; display: grid; grid-template-columns: 1fr 44px 1.2fr 44px 1fr; align-items: stretch; }
+    .arch-box { padding: 20px; border: 1px solid #bed0e3; border-radius: 12px; background: #f7fbff; }
+    .arch-box strong { display: block; color: var(--navy); }
+    .arch-box small { display: block; margin-top: 7px; color: var(--muted); }
+    .arch-arrow { display: grid; place-items: center; color: var(--blue); font-weight: 900; }
+
+    .evidence-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 7px; }
+    .filter { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: #fff; cursor: pointer; font-size: 12px; font-weight: 800; }
+    .filter.active { color: #fff; border-color: var(--navy); background: var(--navy); }
+    .evidence-grid { display: grid; gap: 11px; }
+    .evidence-card { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; transition: opacity .2s ease; }
+    .evidence-card[hidden] { display: none; }
+    .evidence-toggle { width: 100%; display: grid; grid-template-columns: 54px 1fr auto 22px; gap: 14px; align-items: center; padding: 18px 20px; border: 0; color: inherit; text-align: left; background: transparent; cursor: pointer; }
+    .weight { color: var(--blue); font-size: 13px; font-weight: 900; }
+    .criterion b { display: block; color: var(--navy); font-size: 16px; }
+    .criterion span { color: var(--muted); font-size: 12px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; }
+    .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .status.done { color: var(--green); background: #eaf7f1; }
+    .status.partial { color: var(--amber); background: #fff5df; }
+    .status.need { color: var(--red); background: #fff0f0; }
+    .chevron { color: var(--muted); transition: transform .2s ease; }
+    .evidence-card.open .chevron { transform: rotate(180deg); }
+    .evidence-body { display: none; padding: 0 20px 21px 88px; }
+    .evidence-card.open .evidence-body { display: block; }
+    .evidence-body ul { margin: 0; padding-left: 18px; color: #45566a; }
+    .evidence-body li { margin: 7px 0; }
+    .source { margin-top: 13px; padding: 10px 12px; border-left: 3px solid #9bb9d8; color: #5c6d80; background: #f5f8fb; font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; word-break: break-all; }
+
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { padding: 14px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #526378; background: #f3f6f9; font-size: 12px; letter-spacing: .02em; }
+    td { color: #3c4d61; font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+    .table-wrap table { min-width: 770px; }
+    .priority { font-weight: 900; }
+    .priority.p0 { color: var(--red); }
+    .priority.p1 { color: var(--amber); }
+    .priority.p2 { color: var(--green); }
+
+    .risk { padding: 22px; border-top: 4px solid var(--red); }
+    .risk:nth-child(2) { border-top-color: var(--amber); }
+    .risk:nth-child(3) { border-top-color: var(--blue); }
+    .risk-no { color: var(--muted); font-size: 11px; font-weight: 900; }
+    .risk h3 { margin-top: 8px; }
+    .risk strong { display: block; margin-top: 13px; color: var(--green); font-size: 12px; }
+
+    .roadmap { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .phase { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .phase-tag { color: var(--blue); font-size: 11px; font-weight: 900; letter-spacing: .08em; }
+    .phase h3 { margin: 8px 0 10px; font-size: 17px; }
+    .phase ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+    .phase li { margin: 5px 0; }
+
+    .checklist { display: grid; gap: 9px; }
+    .check-item { display: grid; grid-template-columns: 24px 1fr auto; gap: 11px; align-items: center; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .check-item input { width: 18px; height: 18px; accent-color: var(--green); }
+    .check-item label { cursor: pointer; }
+    .check-item small { color: var(--muted); }
+
+    .conclusion { margin: 76px 0; padding: 42px; color: #fff; border-radius: 18px; background: linear-gradient(135deg, var(--navy), var(--navy-2)); }
+    .conclusion h2 { color: #fff; }
+    .conclusion p { max-width: 830px; color: rgba(255,255,255,.8); }
+    .conclusion-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 26px; overflow: hidden; border: 1px solid rgba(255,255,255,.15); border-radius: 12px; }
+    .conclusion-item { padding: 20px; background: rgba(255,255,255,.06); }
+    .conclusion-item small { color: #9edce4; }
+    .conclusion-item b { display: block; margin-top: 5px; }
+
+    footer { padding: 28px 16px 46px; color: #718095; text-align: center; font-size: 12px; }
+    .back-top { position: fixed; right: 20px; bottom: 20px; width: 42px; height: 42px; display: grid; place-items: center; border: 0; border-radius: 50%; color: #fff; background: var(--navy); box-shadow: var(--shadow); cursor: pointer; opacity: 0; pointer-events: none; transition: .2s ease; }
+    .back-top.show { opacity: 1; pointer-events: auto; }
+
+    @media (max-width: 980px) {
+      .nav { display: none; }
+      .cover-inner { grid-template-columns: 1fr; gap: 40px; }
+      .cover-meta { grid-template-columns: repeat(3, 1fr); }
+      .metric-grid, .roadmap { grid-template-columns: repeat(2, 1fr); }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -23px; transform: translateX(50%); }
+    }
+    @media (max-width: 700px) {
+      body { word-break: normal; }
+      .topbar-inner { width: min(100% - 22px, 1120px); }
+      .actions .btn:not(.primary) { display: none; }
+      .cover-inner { min-height: auto; padding: 70px 0 54px; }
+      .cover-meta, .metric-grid, .grid-2, .grid-3, .feature-list, .roadmap, .conclusion-grid { grid-template-columns: 1fr; }
+      .manual-grid { grid-template-columns: 1fr; }
+      .section { padding-top: 58px; }
+      .section-head { grid-template-columns: 1fr; gap: 4px; }
+      .verdict { grid-template-columns: 1fr; }
+      .stamp { width: auto; height: auto; padding: 12px; border: 2px solid var(--blue); border-radius: 9px; transform: none; }
+      .feature-item, .feature-item:nth-child(odd) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .feature-item:last-child { border-bottom: 0; }
+      .persona { grid-template-columns: 1fr; }
+      .evidence-toggle { grid-template-columns: 45px 1fr 20px; }
+      .evidence-toggle .status { grid-column: 2; width: fit-content; }
+      .evidence-body { padding-left: 20px; }
+      .evidence-toolbar { align-items: flex-start; flex-direction: column; }
+      .check-item { grid-template-columns: 24px 1fr; }
+      .check-item small { grid-column: 2; }
+      .conclusion { padding: 28px 22px; }
+    }
+
+    @media print {
+      @page { size: A4; margin: 16mm 15mm 15mm; }
+      body { color: #111; background: #fff; font-size: 10pt; }
+      .topbar, .progress, .back-top, .evidence-toolbar { display: none !important; }
+      .cover { break-after: page; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .cover-inner { width: 100%; min-height: 245mm; padding: 34mm 0 20mm; }
+      main { width: 100%; }
+      .section { padding-top: 12mm; scroll-margin-top: 0; }
+      .section-head { margin-bottom: 6mm; }
+      .section h2 { font-size: 21pt; }
+      .card, .metric, .evidence-card, .phase, .table-wrap, .verdict { box-shadow: none; break-inside: avoid; }
+      .evidence-body { display: block !important; }
+      .chevron { display: none; }
+      .conclusion { margin: 12mm 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      a { text-decoration: none; }
+      footer { padding-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="보고서 처음으로">
+        <span class="brand-mark">M</span>
+        <span>2026년 전문인재 개인 프로젝트 1차 결과보고서</span>
+      </a>
+      <nav class="nav" aria-label="문서 목차">
+        <a href="#problem">문제정의</a><a href="#validation">검증결과</a><a href="#demo-video">시연</a>
+        <a href="#manual">사용법</a><a href="#solution">아키텍처</a><a href="#evidence">실효성</a>
+        <a href="#operation">운영검증</a><a href="#infra-ux">인프라·UX</a><a href="#spread">확산</a>
+      </nav>
+      <div class="actions">
+        <button class="btn primary" id="printReport" type="button">인쇄·PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <header class="cover" id="top">
+    <div class="cover-inner">
+      <div>
+        <p class="kicker">2026년 전문인재 개인프로젝트 1차 결과보고서</p>
+        <h1>MemoMind <span>언제까지 한글 파일로 인수인계 받을래? </br> 흩어진 메모를 업무 치트키로 바꾸는 AI Agent</span></h1>
+        <p class="lead">업무별 메모를 등록하고 자연어로 질문하면, RAG 기반 답변부터 JSON 파일 내보내기까지 지원하는 AI 인수인계 솔루션</p>
+      </div>
+      <div class="cover-meta" aria-label="문서 기본정보">
+        <div class="meta-row"><small>DOCUMENT</small><strong> 개인프로젝트 1차 결과보고</strong></div>
+        <div class="meta-row"><small>Professional Talent</small><strong>2026년 2기 오대웅(odw0902@korea.kr)<strong></div>
+        <div class="meta-row"><small>REPORT DATE</small><strong>2026. 8. 7.</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    </section>
+       <section class="section" id="problem">
+      <div class="section-head">
+        <div class="section-no">01 / PROBLEM</div>
+        <div><h2>저연차 공무원의 조기 퇴직을 만드는 구조적 문제</h2><p class="section-desc">체계적인 인수인계 없이 업무에 투입되고, 질문할 곳조차 없어 고립되는 저연차 공무원의 현실</p></div>
+      </div>
+      <div class="grid-2">
+        <article class="card card-pad persona">
+          <div class="persona-icon" aria-hidden="true">📄</div>
+          <div><span class="eyebrow">Pain Point</span><h3>인수인계서 한 장만 전달받고 기피 업무에 배치되어 전임자의 기안문을 독학하는 3년 미만 저연차 공무원</h3><p>합격의 기쁨도 잠시, 인사이동이나 면직으로 발생한 업무 공백을 떠안고 당장 쏟아지는 악성 민원과 행정업무를 충분한 준비 없이 혼자 감당해야 하는 사람.</p></div>
+        </article>
+        <article class="card card-pad">
+          <span class="eyebrow">관찰된 문제 구조</span>
+          <h3>안정성에 대한 기대가 무너지고 조기 퇴직을 고민</h3>
+          <ul class="clean">
+            <li>전임자의 부재로 체계적인 업무 인수인계가 이루어지지 않음</li>
+            <li>수백 건의 과거 문서와 각종 지침을 스스로 찾아 해석해야 함</li>
+            <li>조직 문화와 부족한 멘토링, 편하게 질문할 선배를 찾기 어려움</li>
+            <li>업무 판단에 따른 법적·행정적 책임에 대한 부담이 저연차 공무원에게 집중됨</li> 
+          </ul>
+        </article>
+      </div>
+      <div class="quote" style="text-align: center; font-size: 1.5em; font-weight: bold; line-height: 1.5;">“인수인계서 한 장 받고 배치된 첫날, 질문할 사람도 없고 책임만 가득해 이미 퇴사를 결심했습니다.”</div>
+      <div class="demo-gif-container" style="max-width: 1000px; margin: 2rem auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <img 
+          src="docs/images/resignation_statistics.png"
+          alt="저연차 공무원 퇴사 통계 그래프" 
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+    </section>
+
+    <section class="section" id="validation"> 
+      <div class="section-head">
+         <div class="section-no">01 / VALIDATION</div> 
+         <div> <h2> AI 기반 업무 인수인계 서비스 실효성 검증 프로젝트 추진 결과<br> <span>"전임자에게 묻지 않아도 되는 구조"</span> </h2> <p class="section-desc"> 저연차 공무원의 업무 공백과 인수인계 단절을 지방정부 AX 전환의 우선 과제로 정의하고,<br> AI를 활용해 업무지식을 구조화·검색·활용할 수 있는 서비스의 현장 적용 가능성과 실효성을 검증 </p> </div> </div> 
+
+      <div class="verdict">
+        <div>
+          <span class="verdict-label">종합 판정</span>
+          <h3>AI 기반 인수인계 서비스의 핵심 기능 및 현장 적용 가능성 확인</h3>
+          <ul class="clean">
+            <li>업무 메모의 등록·검색·수정·삭제부터 AI 기반 업무유형 분류, 자연어 질의응답, 근거 검색 및 답변까지 핵심 기능 구현, 서비스 실효성 검증함.</li>
+            <li>96건의 실제 업무 데이터와 17개 업무유형을 대상으로 온디바이스 경량 AI 모델을 활용해 기존 업무자료를 구조화하고 필요한 정보를 자연어로 검색·확인할 수 있음을 확인함.</li>
+            <li> 전임자의 경험과 문서에 흩어진 업무지식을 후임자가 재활용할 수 있는 <strong>AI 기반 업무지식 자산화 및 인수인계 지원 모델의 가능성</strong>을 확인함</li>
+            <li>부서·업무그룹 단위의 공동 활용을 위한 서버형 데이터베이스와 권한관리, 실제 지방정부 업무환경에서의 효과성 검증이 필요함.</li> 
+          </ul>
+        </div>
+        <div class="stamp">구현<br>확인</div>
+      </div>
+
+      <div class="metric-grid" aria-label="핵심 확인 지표">
+        <article class="metric"><div><span class="value">96</span><span class="unit">건</span></div><div class="label">로컬 DB 등록 레코드</div><small>2026. 8. 7. 파일 점검 기준</small></article>
+        <article class="metric"><div><span class="value">17</span><span class="unit">개</span></div><div class="label">등록 업무유형</div><small>중복 제거 기준</small></article>
+        <article class="metric"><div><span class="value">3</span><span class="unit">단계</span></div><div class="label">등록→질문→인계 흐름</div><small>서비스 소개 화면 기준</small></article>
+        <article class="metric"><div><span class="value">6</span><span class="unit">항목</span></div><div class="label">평가기준 직접 대응</div><small>배점 100% 매핑</small></article>
+      </div>
+      <div class="quote" style="text-align: center; font-size: 1.5em; font-weight: bold; line-height: 1.5;">“MemoMind 개요 및 사용자 매뉴얼 안내 교육 실시"</div>
+      <div class="demo-gif-container" style="max-width: 1000px; margin: 2rem auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <img 
+          src="docs/images/MemoMind_Edu.png"
+          alt="메모마인드 전산교육장 교육" 
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+    </section>
+
+    <section class="section" id="demo-video">
+      <div class="section-head">
+        <div class="section-no">02 / SOLUTION</div>
+        <div>
+          <h2>MemoMind 시연 영상 및 구동 절차</h2>
+          <p class="section-desc">AI 챔피언 수업 중 "신성진 교수님" 강의 메모를 기반으로, RAG 검색형 답변이 생성되는 과정의 구동 영상입니다.</p>
+        </div>
+      </div>
+
+      <div class="flow" aria-label="사용 흐름">
+        <article class="flow-step"><div class="flow-num">1</div><b>자연어 질문</b><span>일상적인 한글 질문 전송</span></article>
+        <article class="flow-step"><div class="flow-num">2</div><b>등록 메모 검색</b><span>자연어로 요청한 내용의 메모 검색</span></article>
+        <article class="flow-step"><div class="flow-num">3</div><b>메모 유형 판단</b><span>75점 미만일 경우 일반답변 처리</span></article>
+        <article class="flow-step"><div class="flow-num">4</div><b>RAG 메모 검색·답변</b><span>일치한 메모를 근거로 AI답변 생성</span></article>
+        <article class="flow-step"><div class="flow-num">5</div><b>인수인계 파일 생성</b><span>업무별·전체 JSON 추출/등록</span></article>
+      </div>
+
+      <div class="video-container" style="max-width: 1000px; margin: 2rem auto 0; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgb(255, 255, 255);">
+        <video 
+          src="docs/videos/MemoMind_main.mp4" 
+          poster="docs/images/MemoMind_main.png"
+          controls 
+          preload="metadata" 
+          poster="" 
+          style="width: 100%; height: auto; display: block;"
+          aria-label="MemoMind 핵심 기능 시연 영상"
+        >
+          <track kind="captions" src="" srclang="ko" label="한국어">
+          사용 중인 브라우저가 비디오 태그를 지원하지 않습니다. 영상을 다운로드하여 확인해 주세요.
+        </video>
+      </div>
+    </section>
+
+    <section class="section" id="manual">
+      <div class="section-head">
+        <div class="section-no">02-1 / USER GUIDE</div>
+        <div>
+          <h2>MemoMind 메모관리 및 인수인계 방법</h2>
+          <p class="section-desc">업무 메모를 등록·수정하고, 필요한 메모를 추출하여 후임자에게 전달하는 기본 사용 방법입니다.</p>
+        </div>
+      </div>
+
+      <div class="manual-grid">
+        <article class="card manual-card">
+          <div class="manual-card-head">
+            <span class="eyebrow">GUIDE 01 · 메모관리</span>
+            <h3>메모 등록 및 수정 방법</h3>
+            <p>프로젝트별 업무 내용을 등록하고, 저장된 메모를 최신 내용으로 수정합니다.</p>
+          </div>
+          <div class="manual-steps" aria-label="메모 등록 및 수정 단계">
+            <div class="manual-step"><b>업무 메모관리로 이동</b><span>메인 화면에서 ‘업무 메모관리’ 메뉴를 선택합니다.</span></div>
+            <div class="manual-step"><b>프로젝트명 입력</b><span>메모를 구분할 수 있도록 해당 업무의 프로젝트명을 입력합니다.</span></div>
+            <div class="manual-step"><b>내용 입력 후 등록·수정</b><span>업무 내용을 입력해 등록하거나, 기존 메모를 선택해 내용을 수정합니다.</span></div>
+          </div>
+          <div class="gif-placeholder">
+            <img src="docs/images/MemoMind_memo_register_edit.gif" alt="MemoMind 메모 등록 및 수정 방법 시연 GIF" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder');">
+            <div class="gif-placeholder-message">
+              <div><b>메모 등록·수정 GIF 자리</b><code>docs/images/MemoMind_memo_register_edit.gif</code></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card manual-card">
+          <div class="manual-card-head">
+            <span class="eyebrow">GUIDE 02 · 인수인계</span>
+            <h3>메모 인수인계 방법</h3>
+            <p>전체 또는 필요한 단위 메모만 추출하고, 전달받은 메모를 등록합니다.</p>
+          </div>
+          <div class="manual-steps" aria-label="메모 인수인계 단계">
+            <div class="manual-step"><b>인수인계 버튼 선택</b><span>업무 화면에서 ‘인수인계’ 버튼을 선택합니다.</span></div>
+            <div class="manual-step"><b>전체 또는 단위 메모 추출</b><span>해당 메모 전체 또는 필요한 단위 메모를 선택해 파일로 추출합니다.</span></div>
+            <div class="manual-step"><b>전달받은 메모 입력</b><span>후임자는 전달받은 해당 메모 파일을 선택해 MemoMind에 입력합니다.</span></div>
+          </div>
+          <div class="gif-placeholder">
+            <img src="docs/images/MemoMind_memo_handover.gif" alt="MemoMind 메모 인수인계 방법 시연 GIF" onerror="this.hidden=true; this.parentElement.classList.add('is-placeholder');">
+            <div class="gif-placeholder-message">
+              <div><b>메모 인수인계 GIF 자리</b><code>docs/images/MemoMind_memo_handover.gif</code></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="solution">
+      <div class="section-head">
+        <div class="section-no">03 / ARCHITECTURE</div>    
+        <div><h2>인수인계의 구조적 문제를 AX로 해결하는 아키텍처 설계</h2>
+          <p class="section-desc">
+             데이터베이스(DB) 대신 개인 PC에 가벼운 JSON 파일 형태로 메모를 저장하여 보안과 독립성을 보장합니다. 
+             온디바이스에 최적화된 Gemma4 E2B 초경량 모델 설계, 인프라(NVIDIA T4 GPU 16G 4대, 총 64G) 증설만으로 RAG형 에이전트(Agent) 서비스 구축, 인수인계에 대한 구조적 문제를 AX(인공지능 전환)로 혁신하였습니다.
+          </p></div>
+      </div>
+      <div class="flow" aria-label="사용 흐름" style="word-break: keep-all;">
+        <article class="flow-step"><div class="flow-num">1</div><b>온디바이스 경량 모델 활용</b><span>Google DeepMind Gemma4 E2B 최적화</span></article>
+        <article class="flow-step"><div class="flow-num">2</div><b>기존 저사양 서버 재정비</b><span>HP DL580 Gen9 활용, 70W 저전력 GPU 4대 증설</span></article>
+        <article class="flow-step"><div class="flow-num">3</div><b>안정적인 OS 환경 구축</b><span>Rocky Linux 10 기반 NVIDIA 드라이버 호환성 확보</span></article>
+        <article class="flow-step"><div class="flow-num">4</div><b>초당 55개 토큰 고속 생성</b><span>55 t/s 속도의 막힘없는 RAG형 AI 답변 출력</span></article>
+        <article class="flow-step"><div class="flow-num">5</div><b>GPU 자원 로드밸런싱(Nginx)</b><span>GPU 4대의 자원 활용을 극대화하는 부하 분산 처리</span></article>
+      </div>
+
+    <section class="section" id="demo-video"></section>
+      <div class="section-head">
+        <div class="section-no">03-1 / ARCHITECTURE</div>
+        <div>
+          <h2>지방정부 AX(인공지능 전환)를 위한 GPU 활용 실증 결과</h2>
+          <p class="section-desc"> 대규모 예산을 투입하여 고가의 새 서버를 도입하지 않더라도, 보유 서버 재정비하는 것만으로 AX 전환이 가능함을 증명했습니다. 기존 HP 서버에 단 8백만 원 수준의 저전력 T4 GPU 자원을 증설 및 최적화하여, 하드웨어 하향 평준화 환경에서도 중단 없는 고품질 RAG형 에이전트 서비스를 성공적으로 실증하였습니다.</p>
+        </div>
+      </div>
+
+      <div class="feature-list" style="margin-top:18px">
+        <article class="feature-item"><div class="feature-icon">01</div><div><b>T4 GPU 1대당 전력 소모량 </b><span>대기(Idle) 상태 시 33W 소모, AI 추론 구동 시 66W 소모로 초저전력 환경 입증</span></div></article>
+        <article class="feature-item"><div class="feature-icon">02</div><div><b>66W 소비전력 시사점</b><span>노란색 백열전구 단 1개 수준의 전력만으로 지방정부나 중소기업도 비용 부담 없이 도입 가능한 초경량·고효율 아키텍처 실증</span></div></article>
+      </div>
+      <div class="demo-gif-container" style="max-width: 1000px; margin: 2rem auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <img 
+          src="docs/images/MemoMind_Power.gif"
+          alt="MemoMind AI 구동 전력 소모량 실증 GIF" 
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+
+
+      <div class="feature-list" style="margin-top: 18px; word-break: keep-all;">
+        <article class="feature-item">
+          <div class="feature-icon">03</div>
+          <div>
+            <b>[문제점] 멀티 GPU 모델 분산 구동 시</b>
+            <span>단일 모델의 레이어 분산 운영으로 인한 추론 속도 저하 및 함수 호출(Function Calling) 먹통 현상 발생</span>
+          </div>
+        </article>
+        <article class="feature-item">
+          <div class="feature-icon">04</div>
+          <div>
+            <b>[조치사항] GPU별 독립 모델 인스턴스 할당</b>
+            <span>GPU 1대당 1개의 초경량 모델을 개별 로딩하여 최상의 추론 속도 확보 및 핵심 함수 호출(Function Calling) 기능 완벽 구현</span>
+          </div>
+        </article>
+      </div>
+
+      </div>
+      <div class="demo-gif-container" style="max-width: 1000px; margin: 2rem auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <img 
+          src="docs/images/LLM_Error.gif"
+          alt="MemoMind AI 구동 전력 소모량 실증 GIF" 
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+
+      <div class="feature-list" style="margin-top:18px">
+        <article class="feature-item"><div class="feature-icon">05</div><div><b>4개 GPU 자원 분산 처리</b><span>LLM의 연속 토큰 생성 특성상 전통적 로드밸런싱의 한계를, 무작위 세션 배분(Random Allocation) 알고리즘으로 해결</span></div></article>
+        <article class="feature-item"><div class="feature-icon">06</div><div><b>Nginx 무작위 라우팅 실증</b><span>Nginx의 Random 분배 설정을 적용하여, 행정 현장의 실무자 동시 접속 20명 수준의 병렬 요청을 안정적으로 동시 처리</span></div></article>
+      </div>
+
+      <div class="demo-gif-container" style="max-width: 1000px; margin: 2rem auto; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <img 
+          src="docs/images/MemoMind_execution.gif"
+          alt="AI 에이전트 동시 실행 및 Nginx 무작위 라우팅 실증 GIF" 
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+
+      <div class="grid-3" style="margin-top:18px">
+        <article class="card risk">
+          <span class="risk-no">GPU 01 · 자원 산정</span>
+          <h3>업무 유형별 최적의 GPU 수준 산정</h3>
+          <p>문서 요약·민원 분류 등 경량 업무와 영상·음성 분석 등 고연산 업무를 명확히 구분함.</p>
+          <strong>방향: 업무량·동시 사용자·모델 기준의 설계로 GPU 과잉 투자 방지</strong>
+        </article>
+        <article class="card risk">
+          <span class="risk-no">GPU 02 · 효율 운영</span>
+          <h3>공용 GPU 풀 기반의 유연한 자원 배분</h3>
+          <p>부서별 개별 도입으로 인한 중복 투자를 막고 피크 시간대 병목 현상을 해소함.</p>
+          <strong>방향: 유휴 GPU 최소화를 위해 새벽 시간 배치처리 등 적용</strong>
+        </article>
+        <article class="card risk">
+          <span class="risk-no">GPU 03 · 개인 AX 확산</span>
+          <h3>자체 운영 AI 모델 API 활용 문화 확산</h3>
+          <p>자체 GPU 인프라를 API 형태로 개방하여, 직원이 개인 업무에 AI를 손쉽게 접목하도록 지원</p>
+          <strong>방향: 범기관 API 허브 제공으로 부서별 개별 구축을 방지하고 상향식(Bottom-up) AX 문화 조성</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="section-head">
+        <div class="section-no">04 / EVIDENCE</div>
+        <div><h2>AI 인수인계 MemoMind 서비스 실효성 검증</h2>
+          <p class="section-desc">구현 여부를 넘어 실제 업무지식이 구조화되고, 필요한 정보를 찾고, 후임자에게 전달될 수 있는지를 단계별로 검증 </p>
+        </div>
+      </div>
+      <article class="evidence-card" data-status="done">
+        <button class="evidence-toggle" type="button" aria-expanded="false">
+          <div class="feature-icon">01</div>
+          <span class="criterion">
+            <b>업무지식의 구조화</b>
+            <span>흩어진 업무자료를 AI가 활용할 수 있는 형태로 전환</span>
+          </span>
+          <span class="status done">검증 완료</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="evidence-body">
+          <ul>
+            <li>기존 업무 메모를 프로젝트·업무유형·내용 등의 구조화된 데이터로 관리할 수 있도록 구현함.</li>
+            <li>96건의 실제 업무 데이터와 17개 업무유형을 기준으로 업무지식을 구조화하고 관리할 수 있음을 확인함.</li>
+            <li>업무별 JSON 추출을 통해 특정 업무지식을 별도 단위로 저장하고 후임자에게 전달할 수 있는 구조를 확인함.</li>
+          </ul>
+          <div class="source">근거: 실제 업무 DB 96건·17개 업무유형 · 업무별 JSON 추출 파일 · MemoMindAI.py 데이터 처리 로직</div>
+        </div>
+      </article>
+
+      <article class="evidence-card" data-status="done">
+        <button class="evidence-toggle" type="button" aria-expanded="false">
+          <div class="feature-icon">02</div>
+          <span class="criterion">
+            <b>자연어 업무검색</b>
+            <span>후임자가 업무를 몰라도 필요한 정보를 찾을 수 있는가</span>
+          </span>
+          <span class="status done">검증 완료</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="evidence-body">
+          <ul>
+            <li>사용자의 자연어 질문을 AI가 기존 업무유형과 연결하고 관련 업무자료를 검색하는 흐름을 구현함.</li>
+            <li>AI 분류 이후 DB의 정확 일치 검색을 적용해 불필요한 검색 복잡도를 줄임.</li>
+            <li>목록 밖 업무유형이나 낮은 신뢰도의 경우 억지로 기존 업무에 매칭하지 않고 일반답변으로 처리하도록 설계함.</li>
+          </ul>
+          <div class="source">근거: MemoMindAI.py AI 분류·검색 로직 · 업무유형 캐시 · 신뢰도 기반 분기 처리</div>
+        </div>
+      </article>
+
+      <article class="evidence-card" data-status="partial">
+        <button class="evidence-toggle" type="button" aria-expanded="false">
+          <div class="feature-icon">03</div>
+          <span class="criterion">
+            <b>인수인계 실효성</b>
+            <span>전임자의 부재에도 후임자가 업무를 이해할 수 있는가</span>
+          </span>
+          <span class="status partial">부분 검증</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="evidence-body">
+          <ul>
+            <li>기존 문서와 업무 메모를 기반으로 후임자가 자연어 질문을 통해 필요한 업무정보를 확인할 수 있는 구조를 구현함.</li>
+            <li>업무별 근거와 메모를 함께 제공해 단순 AI 생성답변이 아닌 기존 업무자료 기반의 답변이 가능하도록 구성함.</li>
+            <li><strong>실제 신규·저연차 공무원이 기존 인수인계 방식보다 업무 파악 시간을 단축하는지는 현장 사용자 테스트가 필요함.</strong></li>
+          </ul>
+          <div class="source">근거: AI 질의응답·근거 검색 기능 · 업무 메모 데이터 · 현장 사용자 테스트 추가 필요</div>
+        </div>
+      </article>
+
+      <article class="evidence-card" data-status="partial">
+        <button class="evidence-toggle" type="button" aria-expanded="false">
+          <div class="feature-icon">04</div>
+          <span class="criterion">
+            <b>사용성 및 업무 적용성</b>
+            <span>AI를 몰라도 실제 행정업무에 사용할 수 있는가</span>
+          </span>
+          <span class="status partial">부분 검증</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="evidence-body">
+          <ul>
+            <li>핵심 사용 흐름을 업무자료 등록 → 자연어 질문 → 답변 확인의 단순한 구조로 구성함.</li>
+            <li>모델 및 AI 서버 설정은 사용자 화면에서 숨겨 일반 사용자가 AI 기술을 직접 이해할 필요가 없도록 설계함.</li>
+            <li>중복 전송 방지, 진행 메시지, 오류 안내, 수정·삭제 기능 등을 구현해 실제 업무환경에서의 사용 편의성을 고려함.</li>
+            <li>실제 공무원의 최초 사용 완료시간과 교육 필요 여부는 사용자 관찰 테스트를 통해 추가 검증할 필요가 있음.</li>
+          </ul>
+          <div class="source">근거: MemoMindAI.py UI·입력·오류 처리 로직 · 서비스 소개 화면 · 사용자 테스트 추가 필요</div>
+        </div>
+      </article>
+
+      <article class="evidence-card" data-status="partial">
+        <button class="evidence-toggle" type="button" aria-expanded="false">
+          <div class="feature-icon">05</div>
+          <span class="criterion">
+            <b>운영 안정성 및 위험관리</b>
+            <span>행정업무에서 AI 오류와 정보 공백을 어떻게 관리하는가</span>
+          </span>
+          <span class="status partial">부분 검증</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="evidence-body">
+          <ul>
+            <li>AI가 모든 질문을 임의로 업무유형에 매칭하지 않도록 신뢰도 기준과 목록 외 처리 로직을 적용함.</li>
+            <li>업무자료의 수정·삭제 기능과 JSON 중복 등록 방지를 통해 데이터 관리 오류를 줄이도록 구성함.</li>
+            <li>AI 서버 연결 실패 시 오류를 사용자에게 안내하도록 구성함.</li>
+            <li>지방정부 확대 적용을 위해서는 개인정보·행정정보 보호, 권한관리, 업무자료 최신성 관리 및 AI 답변 검증체계에 대한 추가 검토가 필요함.</li>
+          </ul>
+          <div class="source">근거: MemoMindAI.py 오류처리·신뢰도 분기·데이터 관리 로직 · 기관 단위 운영 시 보안·권한관리 추가 검증 필요</div>
+        </div>
+      </article>
+
+      <article class="evidence-card" data-status="need">
+        <button class="evidence-toggle" type="button" aria-expanded="false">
+          <div class="feature-icon">06</div>
+          <span class="criterion">
+            <b>지방정부 AX 확장성</b>
+            <span>개인용 서비스를 조직 단위 AI 업무자산으로 확장할 수 있는가</span>
+          </span>
+          <span class="status need">현장 검증 필요</span>
+          <span class="chevron">⌄</span>
+        </button>
+        <div class="evidence-body">
+          <ul>
+            <li>현재 개인 단위 업무지식 관리 구조를 기반으로 부서·업무그룹 단위의 공동 활용 모델로 확장할 수 있음.</li>
+            <li>향후 서버형 데이터베이스를 적용하면 부서별 업무지식의 축적과 공동 활용이 가능함.</li>
+            <li>부서·직급·업무별 접근권한을 적용해 기관 내 업무지식 공유 범위를 관리할 필요가 있음.</li>
+            <li><strong>실제 지방정부 조직에 적용했을 때 업무 파악 시간, 재문의 감소, 인수인계 품질 향상 등의 효과를 측정하는 현장 실증이 다음 단계임.</strong></li>
+          </ul>
+          <div class="source">근거: 현재 서비스 구조 · JSON 데이터 이전 기능 · 서버형 DB 및 권한관리 확장 계획 · 지방정부 현장 실증 필요</div>
+        </div>
+      </article>
+
+      <section class="section" id="operation">
+        <div class="section-head">
+          <div class="section-no">05 / OPERATION</div>
+          <div>
+            <h2>실제 작동 및 재현 환경 검증</h2>
+            <p class="section-desc">AI 서버 구성부터 애플리케이션 실행, 실제 업무 데이터 확인까지 서비스를 완벽히 재현함.</p>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="card risk">
+            <span class="risk-no">STEP 01 · 인프라</span>
+            <h3>온디바이스 AI 서버 환경 검증</h3>
+            <p>로컬 PC 내 llama.cpp 기반의 독립적 AI 실행 환경과 Gemma4 GGUF 모델 로딩을 완벽히 재현함.</p>
+            <strong>검증: 명령어 구동을 통한 AI 질의응답 서버 활성화 완료 <span class="status done">[확인]</span></strong>
+          </article>
+          <article class="card risk">
+            <span class="risk-no">STEP 02 · 애플리케이션</span>
+            <h3>Flet 기반 앱 및 의존성 구동</h3>
+            <p>Python 가상환경 내에서 주요 모듈(flet, httpx, tinydb)의 의존성 및 UI 화면 실행을 검증함.</p>
+            <strong>검증: 패키지 가동 및 메모 등록·자연어 검색 기능 정상 작동 <span class="status done">[확인]</span></strong>
+          </article>
+          <article class="card risk">
+            <span class="risk-no">STEP 03 · 데이터 자산</span>
+            <h3>실무 DB 및 인수인계 파일 검증</h3>
+            <p>AI 답변의 기반이 되는 실제 파일 데이터와 후임자에게 전달할 JSON 추출 산출물 구조를 확인함.</p>
+            <strong>검증: 실제 실무 데이터 96건 및 17개 업무유형 셋업 완료 <span class="status done">[실제 파일]</span></strong>
+          </article>
+        </div>
+      </section>
+
+
+    <section class="section" id="infra-ux">
+      <div class="section-head">
+        <div class="section-no">06 / INFRA & UX</div>
+        <div>
+          <h2>GPU 서버 관리운영 및 사용자 편의성 확보</h2>
+          <p class="section-desc">자체 GPU 인프라를 안정적으로 제어하고, 사용자가 체감할 수 있는 직관적인 편의성을 구축함.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card risk">
+          <span class="risk-no">INFRA 01 · 운영</span>
+          <h3>자체 GPU 인프라 직접운영을 통한 자원 통제력 강화</h3>
+          <p>외부 인력 및 서버 의존 없이 로컬 GPU 자원을 실시간으로 관리하고 최적화함.</p>
+          <strong>대응: GPU 구동 실행파일 패키징, 원클릭 서버 시작 및 실시간 자원 상태점검 툴 제공</strong>
+        </article>
+        <article class="card risk">
+          <span class="risk-no">UX 02 · 편의성</span>
+          <h3>AI 응답 신뢰도 향상을 위한 직관적 UX 설계</h3>
+          <p>서버가 고도화되어도 사용자가 검색 및 분류 결과를 쉽게 납득하고 제어할 수 있어야 함.</p>
+          <strong>대응: AI 추출 근거/건수 명시, 직관적인 카테고리 수동 전환 인터페이스 배치</strong>
+        </article>
+        <article class="card risk">
+          <span class="risk-no">DATA 03 · 안정성</span>
+          <h3>자체 인프라 기반의 안전한 메모리 라이프사이클 관리</h3>
+          <p>폐쇄형 GPU 운영의 보안 이점을 살리면서 데이터의 최신성과 정합성을 유지함.</p>
+          <strong>대응: 정보 만료일·출처 자동 표시, 유저 편의를 돕는 자동 백업 및 업무별 저장 기준 적용</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="spread">
+      <div class="section-head">
+        <div class="section-no">07 / AX SCALE</div>
+        <div><h2>기관 내 AX 전환 및 사용자 확대 문화 조성</h2><p class="section-desc">초기 체감 중심의 성공 사례를 바탕으로 주도적인 AI 활용 문화를 전사적으로 확산함.</p></div>
+      </div>
+      <div class="roadmap">
+        <article class="phase"><span class="phase-tag">PHASE 1 · 도입 체감</span><h3>AX 핵심 경험 도출</h3><ul><li>핵심 사용자 심층 인터뷰 실시</li><li>업무 효율성 측정 기준선 수립</li><li>주요 실무 중심 시범 적용</li></ul></article>
+        <article class="phase"><span class="phase-tag">PHASE 2 · 부서 확산</span><h3>성과 공유 및 시연</h3><ul><li>부서 내 실무 활용 사례 시연</li><li>도입 전후 정량적 성과 분석</li><li>사용자 피드백 및 개선안 수집</li></ul></article>
+        <article class="phase"><span class="phase-tag">PHASE 3 · 기관 전반</span><h3>AX 문화 안착</h3><ul><li>직무별 공통 활용 템플릿 보급</li><li>접근성 높은 원쪽 매뉴얼 배포</li><li>커뮤니티 연계 우수 사례 전파</li></ul></article>
+        <article class="phase"><span class="phase-tag">PHASE 4 · 표준 가이드</span><h3>재사용 패키지 확산</h3><ul><li>기관 맞춤형 설정 최적화 지원</li><li>운영·보안 가이드 표준화</li><li>지속 가능한 AX 거버넌스 구축</li></ul></article>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <article class="card card-pad"><span class="eyebrow">AX 전환의 트리거</span><h3>자신의 업무 데이터로 즉시 검증하는 3분 체험</h3><p>범용적인 예시보다 실무자가 당장 처리해야 할 데이터로 AI의 효용성을 직접 체감하게 유도하여 자발적인 참여 문화를 형성함.</p></article>
+        <article class="card card-pad"><span class="eyebrow">사용자 진입장벽 해소</span><h3>인프라 및 보안 허들의 선제적 원클릭 패키징</h3><p>기술적 복잡성을 화면 뒤로 숨기고 원클릭 실행 환경을 제공하여, 디지털 취약 계층을 포함한 전 직원이 부담 없이 다가오는 환경을 구축함.</p></article>
+      </div>
+    </section>
+
+    <section class="conclusion">
+      <span class="eyebrow" style="color:#9ee5ed">FINAL MESSAGE</span>
+      <h2>MemoMind의 본질은 전임자와 후임자 간에<br>“서로 묻지 않아도 업무가 이어지는” AX 구조 전환 목표.</h2>
+      <p>잦은 순환근무 속에서 전임자를 붙잡고 묻거나 후임자에게 매번 다시 설명하던 기존의 비효율적 관행을 완전히 끊어냈습니다.<br>후임자가 전임자의 과거 기록을 통해 혼자서 업무 맥락을 파악하고 비효율적인 질문 횟수를 줄였는지 입증하는데 있습니다.</p>
+      <div class="conclusion-grid">
+        <div class="conclusion-item"><small>과거의 한계</small><b>인사이동 시 단편적 문서 및 반복적 재 문의 의존</b></div>
+        <div class="conclusion-item"><small>AX 전환 성과</small><b>메모 기록으로 “서로 묻지 않는” 업무 환경 구현</b></div>
+        <div class="conclusion-item"><small>평가 핵심</small><b>메모 활용도 및 질문 감소율 정량 검증</b></div>
+      </div>
+    </section>
+
+
+  </main>
+
+
+  <footer>
+    <p>2026년 AI챔피언 전문인재 개인 프로젝트 1차 결과보고서</p>
+  </footer>
+  <button class="back-top" type="button" aria-label="맨 위로 이동">↑</button>
+
+  <script>
+    (() => {
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+      scrollTo(0, 0);
+      addEventListener("pageshow", () => scrollTo(0, 0));
+
+      const $ = (s, root = document) => root.querySelector(s);
+      const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+      const progress = $(".progress");
+      const backTop = $(".back-top");
+      const navLinks = $$(".nav a");
+      const sections = navLinks.map(link => $(link.getAttribute("href"))).filter(Boolean);
+
+      const updateScroll = () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        progress.style.width = `${max > 0 ? (scrollY / max) * 100 : 0}%`;
+        backTop.classList.toggle("show", scrollY > 500);
+        let current = sections[0]?.id;
+        sections.forEach(section => { if (section.getBoundingClientRect().top <= 120) current = section.id; });
+        navLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === `#${current}`));
+      };
+      addEventListener("scroll", updateScroll, { passive: true });
+      addEventListener("resize", updateScroll);
+      updateScroll();
+
+      backTop.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+      $("#printReport").addEventListener("click", () => print());
+
+      $$(".evidence-toggle").forEach(button => {
+        button.addEventListener("click", () => {
+          const card = button.closest(".evidence-card");
+          const open = card.classList.toggle("open");
+          button.setAttribute("aria-expanded", String(open));
+        });
+      });
+
+      let allOpen = false;
+      $("#expandAll").addEventListener("click", event => {
+        allOpen = !allOpen;
+        $$(".evidence-card").forEach(card => {
+          card.classList.toggle("open", allOpen);
+          $(".evidence-toggle", card).setAttribute("aria-expanded", String(allOpen));
+        });
+        event.currentTarget.textContent = allOpen ? "근거 모두 접기" : "근거 모두 펼치기";
+      });
+
+      $$(".filter").forEach(button => {
+        button.addEventListener("click", () => {
+          $$(".filter").forEach(item => item.classList.remove("active"));
+          button.classList.add("active");
+          const filter = button.dataset.filter;
+          $$(".evidence-card").forEach(card => {
+            card.hidden = filter !== "all" && card.dataset.status !== filter;
+          });
+        });
+      });
+
+      $$("#checklist input").forEach(input => {
+        const key = `memomind-report-${input.id}`;
+        try { input.checked = localStorage.getItem(key) === "true"; } catch (_) {}
+        input.addEventListener("change", () => {
+          try { localStorage.setItem(key, String(input.checked)); } catch (_) {}
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
