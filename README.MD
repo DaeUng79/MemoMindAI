@@ -386,7 +386,9 @@ python MemoMindAI.py
 
 ### 3-5. 선택 사항: 여러 GPU에 독립 인스턴스 배치
 
-GPU마다 모델 인스턴스를 하나씩 배치할 수 있습니다. 아래 예시는 GPU 4개를 각각 8081~8084 포트에 할당합니다.
+GPU마다 모델 인스턴스를 하나씩 배치할 수 있습니다. 
+
+아래 예시는 GPU 4개를 각각 8081~8084 포트에 할당합니다.
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 ./build/bin/llama-server -hf ggml-org/gemma-4-E2B-it-GGUF:Q4_0 --alias gemma-4-e2b-it --host 127.0.0.1 --port 8081 --n-gpu-layers all --no-mmproj --reasoning off -c 32768 -np 1
@@ -488,7 +490,9 @@ dist/
 
 ### 5-1. 서버 운영 시 기본 API 주소 변경
 
-`DEFAULT_API_URL`은 MemoMindAI 클라이언트가 접속할 llama.cpp 서버 주소입니다. 서버의 수신 주소를 변경하는 설정이 아니므로, 서버에서는 별도로 `--host`와 `--port` 옵션을 지정해야 합니다.
+`DEFAULT_API_URL`은 MemoMindAI 클라이언트가 접속할 llama.cpp 서버 주소입니다. 
+
+서버의 수신 주소를 변경하는 설정이 아니므로, 서버에서는 별도로 `--host`와 `--port` 옵션을 지정해야 합니다.
 
 #### 소스의 기본값 변경
 
@@ -537,7 +541,9 @@ DEFAULT_MODEL_NAME = "my-model"
 | 채팅 사용자 아이콘       | `assets/yang.png`  | `src/memomind/ui/app.py`의 `user_avatar_url`  |
 | 채팅 AI 아이콘           | `assets/korea.png` | `src/memomind/ui/app.py`의 `ai_avatar_url`    |
 
-기존 파일명을 유지하면서 이미지만 교체하면 소스 수정 없이 적용할 수 있습니다. 파일명을 변경할 때는 새 이미지 파일을 `assets` 폴더에 넣고 다음 항목을 함께 수정합니다.
+기존 파일명을 유지하면서 이미지만 교체하면 소스 수정 없이 적용할 수 있습니다. 
+
+파일명을 변경할 때는 새 이미지 파일을 `assets` 폴더에 넣고 다음 항목을 함께 수정합니다.
 
 앱 창 아이콘:
 
@@ -573,4 +579,6 @@ flet pack ./MemoMindAI.py \
   --name "MemoMind_v1.0"
 ```
 
-`--add-data "assets:assets"`가 `assets` 폴더 전체를 포함하므로 이미지 파일을 추가해도 이 옵션은 변경하지 않습니다. 소스 실행 중이라면 앱을 재시작하고, 기존 배포 프로그램이라면 새 아이콘을 포함하여 다시 빌드해야 합니다.
+`--add-data "assets:assets"`가 `assets` 폴더 전체를 포함하므로 이미지 파일을 추가해도 이 옵션은 변경하지 않습니다. 
+
+소스 실행 중이라면 앱을 재시작하고, 기존 배포 프로그램이라면 새 아이콘을 포함하여 다시 빌드해야 합니다.
