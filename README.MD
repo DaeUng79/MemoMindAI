@@ -44,9 +44,11 @@ flowchart LR
     L <--> M[llama.cpp 서버<br>Gemma 4 E2B GGUF]
 ```
 
-최상위 `MemoMindAI.py`는 프로그램 진입점이고, 실제 애플리케이션 코드는 `src/memomind`에 있습니다. 파일별 역할은 [아키텍처 문서](src/ARCHITECTURE.md)를 참고하세요.
+최상위 `MemoMindAI.py`는 프로그램 진입점입니다.
 
-코드를 수정할 때는 원하는 기능에 따라 다음 파일부터 확인하면 됩니다.
+실제 애플리케이션 코드는 `src/memomind`에 있습니다. 파일별 역할은 [아키텍처 문서](src/ARCHITECTURE.md)를 참고하세요.
+
+코드를 수정할 때는 원하는 기능에 따라 다음 파일을 참고하시면 됩니다.
 
 | 아키텍처 구분                          | 개발 파일                          |
 | -------------------------------------- | ----------------------------------- |
@@ -92,7 +94,11 @@ flowchart LR
 - 모델 파일보다 여유 있는 메모리
 - 최초 모델 다운로드를 위한 인터넷 연결
 
-Apple Silicon Mac은 Metal 가속을 사용할 수 있습니다. Windows·Linux에서 NVIDIA GPU를 사용하려면 CUDA 지원 `llama.cpp` 빌드가 필요합니다. GPU가 없어도 CPU로 실행할 수 있지만 응답 속도가 느릴 수 있습니다.
+Apple Silicon Mac은 Metal 가속을 사용할 수 있습니다. 
+
+Windows·Linux에서 NVIDIA GPU를 사용하려면 CUDA 지원 `llama.cpp` 빌드가 필요합니다. 
+
+GPU가 없어도 CPU로 실행할 수 있지만 응답 속도가 느릴 수 있습니다.
 
 ### 2-2. Python 환경과 앱 의존성 설치
 
@@ -135,11 +141,15 @@ brew install llama.cpp
 llama-server --version
 ```
 
-Apple Silicon용 공식 빌드는 Metal 가속이 기본으로 활성화됩니다. 최신 배포판에서 `llama-server` 대신 통합 CLI만 제공되면 `llama version`으로 설치를 확인하고 이후 명령의 `llama-server`를 `llama serve`로 바꿉니다.
+Apple Silicon용 공식 빌드는 Metal 가속이 기본으로 활성화됩니다. 
+
+최신 배포판에서 `llama-server` 대신 통합 CLI만 제공되면 `llama version`으로 설치를 확인하고 이후 명령의 `llama-server`를 `llama serve`로 바꿉니다.
 
 ### 2-4. 모델 서버 실행
 
-가장 간단한 방법은 `-hf` 옵션으로 Q4_0 모델을 자동 다운로드하는 것입니다. 처음 실행할 때 모델이 Hugging Face 캐시에 저장됩니다.
+가장 간단한 방법은 `-hf` 옵션으로 Q4_0 모델을 자동 다운로드하는 것입니다. 
+
+처음 실행할 때 모델이 Hugging Face 캐시에 저장됩니다.
 
 macOS·Linux:
 
@@ -196,7 +206,9 @@ python MemoMindAI.py
 - 여러 슬롯을 사용한다면 `-np` 값을 낮춥니다.
 - GPU 메모리가 부족하면 `--n-gpu-layers` 값을 낮춰 일부 레이어를 CPU에 배치합니다.
 
-`--reasoning` 옵션을 인식하지 못하면 `llama.cpp` 버전이 오래된 것입니다. WinGet·Homebrew 패키지를 업데이트하거나 최신 릴리스로 다시 설치하세요.
+`--reasoning` 옵션을 인식하지 못하면 `llama.cpp` 버전이 오래된 것입니다. 
+
+WinGet·Homebrew 패키지를 업데이트하거나 최신 릴리스로 다시 설치하세요.
 
 ## 3. 서버·클라이언트 설치 방법
 
@@ -212,7 +224,9 @@ flowchart LR
 
 ### 3-1. 서버에 llama.cpp 설치
 
-아래는 Ubuntu와 NVIDIA GPU를 기준으로 한 예시입니다. 먼저 `nvidia-smi`와 `nvcc --version`이 정상 동작하는지 확인합니다.
+아래는 Ubuntu와 NVIDIA GPU를 기준으로 한 예시입니다. 
+
+먼저 `nvidia-smi`와 `nvcc --version`이 정상 동작하는지 확인합니다.
 
 ```bash
 sudo apt update
@@ -228,7 +242,9 @@ CPU 전용 서버라면 CMake 구성 명령에서 `-DGGML_CUDA=ON`을 제외합�
 
 ### 3-2. 서버에서 모델 API 실행
 
-`<내부망_IP>`는 `192.168.0.20`과 같은 실제 서버 주소입니다. 아래 명령은 모든 서버 네트워크 인터페이스의 8080 포트에서 API 요청을 받습니다.
+`<내부망_IP>`는 `192.168.0.20`과 같은 실제 서버 주소입니다. 
+
+아래 명령은 모든 서버 네트워크 인터페이스의 8080 포트에서 API 요청을 받습니다.
 
 ```bash
 ./build/bin/llama-server \
@@ -244,7 +260,9 @@ CPU 전용 서버라면 CMake 구성 명령에서 `-DGGML_CUDA=ON`을 제외합�
 - `-c 32768`: 모델의 컨텍스트 크기를 32,768토큰으로 설정합니다.
 - `-np 1`: 요청 처리 슬롯을 1개로 설정합니다.
 
-컨텍스트 크기와 슬롯 수를 늘리면 메모리 사용량도 증가합니다. 서버 자원에 맞게 `-c`와 `-np` 값을 조정하세요.
+컨텍스트 크기와 슬롯 수를 늘리면 메모리 사용량도 증가합니다. 
+
+서버 자원에 맞게 `-c`와 `-np` 값을 조정하세요.
 
 클라이언트 PC에서 연결 상태를 확인합니다.
 
@@ -254,20 +272,22 @@ curl http://<내부망_IP>:8080/health
 
 #### Rocky Linux 10.1 서버 운영 예시
 
-다음은 Rocky Linux 10.1과 NVIDIA GPU 환경에서 실제로 사용한 명령입니다. 아래 경로는 사용자 계정 `odw0902`를 기준으로 하므로 다른 서버에서는 계정명과 `llama.cpp_new` 설치 경로를 실제 환경에 맞게 변경합니다.
+다음은 Rocky Linux 10.1과 NVIDIA GPU 환경에서 실제로 사용한 명령입니다. 
+
+아래 경로는 사용자 계정를 기준으로 하므로 다른 서버에서는 계정명과 `llama.cpp`설치 경로를 실제 환경에 맞게 변경합니다.
 
 모델을 저장할 폴더로 이동한 뒤 GGUF 파일을 다운로드합니다.
 
 ```bash
-cd /home/계정이름/llama.cpp_new/models
+cd /home/사용자계정/llama.cpp/models
 wget -O gemma-4-E2B-it-Q4_K_M.gguf "https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF/resolve/main/gemma-4-E2B-it-Q4_K_M.gguf?download=true"
 ```
 
 빌드된 실행 파일 폴더로 이동하여 서버를 백그라운드로 실행합니다.
 
 ```bash
-cd /home/계정이름/llama.cpp_new/build/bin
-nohup ./llama-server -m /home/odw0902/llama.cpp_new/models/gemma-4-E2B-it-Q4_K_M.gguf -ngl 99 -np 4 -cb --reasoning off --host 0.0.0.0 --port 8081 > llama.log 2>&1 &
+cd /home/사용자계정/llama.cpp/build/bin
+nohup ./llama-server -m /home/사용자계정/llama.cpp_new/models/gemma-4-E2B-it-Q4_K_M.gguf -ngl 99 -np 4 -cb --reasoning off --host 0.0.0.0 --port 8081 > llama.log 2>&1 &
 ```
 
 주요 옵션은 다음과 같습니다.
