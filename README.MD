@@ -23,8 +23,6 @@ MemoMindAI는 업무 메모를 구조화하여 로컬 LLM에 자연어로 질문
 | ---------------------------------------------------------------- | -------------------------------------------------------- |
 | ![메모 등록과 수정](docs/images/MemoMind_memo_register_edit.gif) | ![메모 인수인계](docs/images/MemoMind_memo_handover.gif) |
 
-[전체 시연 영상 보기](docs/videos/MemoMind_main.mp4) · [프로젝트 결과 보고서 보기](MemoMind_report.html)
-
 ## 동작 구조
 
 ```mermaid
