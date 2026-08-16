@@ -582,3 +582,55 @@ flet pack ./MemoMindAI.py \
 `--add-data "assets:assets"`가 `assets` 폴더 전체를 포함하므로 이미지 파일을 추가해도 이 옵션은 변경하지 않습니다. 
 
 소스 실행 중이라면 앱을 재시작하고, 기존 배포 프로그램이라면 새 아이콘을 포함하여 다시 빌드해야 합니다.
+
+## 6. 오픈소스 및 AI 모델 라이선스
+
+### 6-1. MemoMindAI 소스 코드
+
+이 저장소에서 DAX Lab이 직접 작성한 MemoMindAI 소스 코드는 [MIT License](LICENSE)로 공개합니다. MIT는 OSI가 승인한 오픈소스 소프트웨어 라이선스이며, 저작권 고지와 라이선스 전문을 유지하는 조건으로 사용·복제·수정·병합·배포·재라이선스·판매할 수 있습니다.
+
+이 라이선스는 MemoMindAI가 호출하는 AI 모델 가중치와 제3자 라이브러리의 라이선스를 변경하지 않습니다. 각 구성요소에는 아래의 개별 라이선스가 적용됩니다.
+
+### 6-2. AI 모델 활용 명세
+
+| 항목 | 내용 |
+| --- | --- |
+| 활용 유형 | 외부 공개 모델을 추가 학습 없이 사용하는 유형 1 |
+| 기반 모델 | Gemma 4 E2B IT, Google DeepMind |
+| 공개 수준 | 일반 대중이 가중치를 내려받아 로컬·독립 서버에서 구동할 수 있는 오픈웨이트 모델 |
+| 모델 라이선스 | Apache License 2.0 |
+| 공식 원본 | [google/gemma-4-E2B-it](https://huggingface.co/google/gemma-4-E2B-it) |
+| GGUF 배포본 | Q4_0: [ggml-org/gemma-4-E2B-it-GGUF](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · Q4_K_M: [unsloth/gemma-4-E2B-it-GGUF](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) |
+| 추론 엔진 | [llama.cpp](https://github.com/ggml-org/llama.cpp), MIT License |
+| 추가 학습 | 없음. 별도의 학습 데이터셋, 파인튜닝 코드 또는 새 가중치를 생성하지 않음 |
+| 모델 포함 여부 | 저장소와 배포 프로그램에 모델 파일을 포함하지 않으며 사용자가 공개 저장소에서 별도로 내려받음 |
+| 외부 상용 API 의존 | 없음. 기본 구성은 로컬 PC 또는 사용자가 지정한 내부망의 `llama.cpp` 서버에서 독립 구동 |
+
+Gemma 4는 이전 Gemma 버전에 적용되는 별도 Gemma Terms가 아니라 [Gemma 4 Apache 2.0 라이선스](https://ai.google.dev/gemma/docs/gemma_4_license)가 적용됩니다. 재배포할 때에는 Apache 2.0 전문 제공, 기존 저작권·특허·상표·귀속 고지 유지, 변경 파일의 수정 사실 표시, 원본에 `NOTICE`가 있으면 해당 고지의 보존 등 라이선스 조건을 준수해야 합니다. `Gemma`와 Google 관련 상표의 사용 권한이 부여되는 것은 아닙니다.
+
+MemoMindAI는 Gemma 4 E2B IT의 GGUF 양자화본을 텍스트 추론에만 사용하며 `--no-mmproj`로 멀티모달 프로젝터를 사용하지 않습니다. GGUF 변환·양자화는 배포 형식과 정밀도를 바꾸는 것이며, 이 프로젝트는 모델을 파인튜닝하거나 별도의 파생 가중치를 만들지 않습니다.
+
+### 6-3. 직접 의존성 SBOM
+
+아래 표는 `requirements.txt`와 기본 실행 구성에 포함된 직접 의존성입니다. 각 패키지의 저작권 및 라이선스 고지는 해당 공식 저장소와 배포 패키지를 따릅니다.
+
+| 구성요소 | 버전 | 라이선스 | 공식 저장소 | 사용 목적 |
+| --- | ---: | --- | --- | --- |
+| Flet | 0.86.5 | Apache-2.0 | [flet-dev/flet](https://github.com/flet-dev/flet) | 데스크톱 UI 및 이벤트 처리 |
+| TinyDB | 4.9.0 | MIT | [msiemens/tinydb](https://github.com/msiemens/tinydb) | 로컬 JSON 메모 저장·조회 |
+| HTTPX | 0.28.1 | BSD-3-Clause | [encode/httpx](https://github.com/encode/httpx) | `llama.cpp` API 비동기·스트리밍 통신 |
+| PyInstaller | 6.22.0 | GPL-2.0-or-later with Bootloader Exception | [pyinstaller/pyinstaller](https://github.com/pyinstaller/pyinstaller) | Windows·macOS 실행 파일 패키징 |
+| Pillow | 12.3.0 | MIT-CMU | [python-pillow/Pillow](https://github.com/python-pillow/Pillow) | 배포 아이콘·이미지 처리 |
+| llama.cpp | 사용자가 설치한 버전 | MIT | [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) | GGUF 모델 로딩 및 OpenAI 호환 추론 서버 |
+| Gemma 4 E2B IT GGUF | Q4_0 또는 Q4_K_M | Apache-2.0 | [Google 원본](https://huggingface.co/google/gemma-4-E2B-it) · [ggml-org Q4_0](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · [Unsloth Q4_K_M](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) | 공개 가중치 기반 로컬 텍스트 생성 |
+
+`pip`가 함께 설치하는 전이 의존성은 각 패키지의 배포 메타데이터에 표시된 라이선스를 따릅니다. 배포 전에 실제 빌드 환경의 전체 의존성 목록과 라이선스를 다시 추출하여 고지 파일에 반영해야 합니다.
+
+### 6-4. 라이선스 준수 체크리스트
+
+- MemoMindAI 소스 배포물에 `LICENSE`와 저작권 고지를 포함합니다.
+- 제3자 라이브러리와 모델 파일을 재배포할 경우 해당 라이선스 전문과 필수 고지를 함께 제공합니다.
+- 수정한 Apache-2.0 구성요소를 배포할 경우 변경 사실을 명확히 표시하고, 원본 `NOTICE`가 있으면 보존합니다.
+- 모델·라이브러리 명칭은 출처 설명 용도로만 사용하며 원저작자의 보증이나 제휴를 암시하지 않습니다.
+- 민감한 메모 데이터, API 주소, 로그와 사용자 생성 데이터는 공개 저장소 및 배포 패키지에서 제외합니다.
+- 우수·수상작으로 선정되면 공개 저장소를 수상일로부터 5년간 공개 상태로 유지합니다.
