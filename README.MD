@@ -110,7 +110,6 @@ Windows PowerShell:
 py -3 -m venv .venv
 Set-ExecutionPolicy -Scope Process Bypass
 .\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -119,7 +118,6 @@ macOS·Linux:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -186,7 +184,7 @@ curl http://127.0.0.1:8080/health
 모델 서버를 그대로 둔 상태에서 두 번째 터미널을 열고 가상환경을 활성화합니다.
 
 ```bash
-python MemoMindAI.py
+flet run MemoMindAI.py
 ```
 
 앱은 기본적으로 `http://127.0.0.1:8080/v1/chat/completions`에 연결하고 `gemma-4-e2b-it` 모델 이름을 사용합니다.
@@ -381,7 +379,7 @@ python MemoMindAI.py
 
 | 환경변수             | 기본값                                        | 설명                                                         |
 | -------------------- | --------------------------------------------- | ------------------------------------------------------------ |
-| `LLAMACPP_API_URL` | `http://127.0.0.1:8080/v1/chat/completions` | llama.cpp OpenAI 호환 채팅 API 주소                          |
+| `LLAMACPP_API_URL` | `http://127.0.0.1:8080/v1/chat/completions` | llama.cpp OpenAI 호환 채팅 API, IP 주소                      |
 | `MODEL_NAME`       | `gemma-4-e2b-it`                            | API 요청에 전달할 모델 이름. 서버의`--alias`와 일치해야 함 |
 
 ### 3-5. 선택 사항: 여러 GPU에 독립 인스턴스 배치
@@ -397,7 +395,7 @@ CUDA_VISIBLE_DEVICES=2 ./build/bin/llama-server -hf ggml-org/gemma-4-E2B-it-GGUF
 CUDA_VISIBLE_DEVICES=3 ./build/bin/llama-server -hf ggml-org/gemma-4-E2B-it-GGUF:Q4_0 --alias gemma-4-e2b-it --host 127.0.0.1 --port 8084 --n-gpu-layers all --no-mmproj --reasoning off -c 32768 -np 1
 ```
 
-Nginx 같은 내부 리버스 프록시에서 인스턴스들을 분산하고 클라이언트의 `LLAMACPP_API_URL`을 프록시 주소로 지정합니다. SSE 스트리밍을 사용하므로 프록시 버퍼링을 끄고 읽기 제한시간을 충분히 길게 설정해야 합니다.
+"Nginx" 같은 다중접속시 위 4개의 GPU에 골고루 사용자 분산을 위해  클라이언트 프로그램 `LLAMACPP_API_URL`을 프록시 주소(8080 port)로 지정합니다.
 
 ### 3-6. 연결 문제와 보안 확인
 
@@ -406,7 +404,7 @@ Nginx 같은 내부 리버스 프록시에서 인스턴스들을 분산하고 �
 - `curl http://<내부망_IP>:8080/health`가 정상 응답하는지 확인합니다.
 - `LLAMACPP_API_URL`에 `/v1/chat/completions`까지 포함했는지 확인합니다.
 - 서버 IP, 8080/TCP 방화벽, 클라이언트와 서버의 네트워크 연결을 확인합니다.
-- `MODEL_NAME`과 서버의 `--alias`가 같은지 확인합니다.
+- `MODEL_NAME`과 서버의 `--alias`모델이 같은지 확인합니다.
 
 운영할 때는 다음 보안 원칙을 적용합니다.
 
@@ -422,7 +420,7 @@ Nginx 같은 내부 리버스 프록시에서 인스턴스들을 분산하고 �
 
 빌드 전에 프로젝트 루트에서 `pip install -r requirements.txt`를 완료해야 합니다. 이 파일에는 빌드에 필요한 `flet`, `pyinstaller`, `pillow`가 포함되어 있습니다.
 
-### 4-1. Windows 빌드
+### 4-1. Windows 용 배포 프로그램 만들기
 
 PowerShell에서 실행합니다.
 
@@ -441,7 +439,7 @@ dist/
 └── MemoMind_v1.0.exe
 ```
 
-### 4-2. macOS 빌드
+### 4-2. macOS 용 배포 프로그램 만들기
 
 터미널에서 실행합니다.
 
@@ -634,4 +632,6 @@ GGUF 변환·양자화는 배포 형식과 정밀도를 바꾸는 것이며, 이
 | llama.cpp           | 사용자가 설치한 버전 | MIT                                        | [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp)                                                                                                                                               | GGUF 모델 로딩 및 OpenAI 호환 추론 서버 |
 | Gemma 4 E2B IT GGUF |     Q4_0 또는 Q4_K_M | Apache-2.0                                 | [Google 원본](https://huggingface.co/google/gemma-4-E2B-it) · [ggml-org Q4_0](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · [Unsloth Q4_K_M](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) | 공개 가중치 기반 로컬 텍스트 생성       |
 
-`pip`가 함께 설치하는 전이 의존성은 각 패키지의 배포 메타데이터에 표시된 라이선스를 따릅니다. 배포 전에 실제 빌드 환경의 전체 의존성 목록과 라이선스를 다시 추출하여 고지 파일에 반영해야 합니다.
+`pip`가 함께 설치하는 전이 의존성은 각 패키지의 배포 메타데이터에 표시된 라이선스를 따릅니다. 
+
+배포 전에 실제 빌드 환경의 전체 의존성 목록과 라이선스를 다시 추출하여 고지 파일에 반영해야 합니다.
