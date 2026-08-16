@@ -94,9 +94,9 @@ flowchart LR
 - 모델 파일보다 여유 있는 메모리
 - 최초 모델 다운로드를 위한 인터넷 연결
 
-Apple Silicon Mac은 Metal 가속을 사용할 수 있습니다. 
+Apple Silicon Mac은 Metal 가속을 사용할 수 있습니다.
 
-Windows·Linux에서 NVIDIA GPU를 사용하려면 CUDA 지원 `llama.cpp` 빌드가 필요합니다. 
+Windows·Linux에서 NVIDIA GPU를 사용하려면 CUDA 지원 `llama.cpp` 빌드가 필요합니다.
 
 GPU가 없어도 CPU로 실행할 수 있지만 응답 속도가 느릴 수 있습니다.
 
@@ -141,13 +141,13 @@ brew install llama.cpp
 llama-server --version
 ```
 
-Apple Silicon용 공식 빌드는 Metal 가속이 기본으로 활성화됩니다. 
+Apple Silicon용 공식 빌드는 Metal 가속이 기본으로 활성화됩니다.
 
 최신 배포판에서 `llama-server` 대신 통합 CLI만 제공되면 `llama version`으로 설치를 확인하고 이후 명령의 `llama-server`를 `llama serve`로 바꿉니다.
 
 ### 2-4. 모델 서버 실행
 
-가장 간단한 방법은 `-hf` 옵션으로 Q4_0 모델을 자동 다운로드하는 것입니다. 
+가장 간단한 방법은 `-hf` 옵션으로 Q4_0 모델을 자동 다운로드하는 것입니다.
 
 처음 실행할 때 모델이 Hugging Face 캐시에 저장됩니다.
 
@@ -206,7 +206,7 @@ python MemoMindAI.py
 - 여러 슬롯을 사용한다면 `-np` 값을 낮춥니다.
 - GPU 메모리가 부족하면 `--n-gpu-layers` 값을 낮춰 일부 레이어를 CPU에 배치합니다.
 
-`--reasoning` 옵션을 인식하지 못하면 `llama.cpp` 버전이 오래된 것입니다. 
+`--reasoning` 옵션을 인식하지 못하면 `llama.cpp` 버전이 오래된 것입니다.
 
 WinGet·Homebrew 패키지를 업데이트하거나 최신 릴리스로 다시 설치하세요.
 
@@ -224,7 +224,7 @@ flowchart LR
 
 ### 3-1. 서버에 llama.cpp 설치
 
-아래는 Ubuntu와 NVIDIA GPU를 기준으로 한 예시입니다. 
+아래는 Ubuntu와 NVIDIA GPU를 기준으로 한 예시입니다.
 
 먼저 `nvidia-smi`와 `nvcc --version`이 정상 동작하는지 확인합니다.
 
@@ -242,7 +242,7 @@ CPU 전용 서버라면 CMake 구성 명령에서 `-DGGML_CUDA=ON`을 제외합�
 
 ### 3-2. 서버에서 모델 API 실행
 
-`<내부망_IP>`는 `192.168.0.20`과 같은 실제 서버 주소입니다. 
+`<내부망_IP>`는 `192.168.0.20`과 같은 실제 서버 주소입니다.
 
 아래 명령은 모든 서버 네트워크 인터페이스의 8080 포트에서 API 요청을 받습니다.
 
@@ -260,7 +260,7 @@ CPU 전용 서버라면 CMake 구성 명령에서 `-DGGML_CUDA=ON`을 제외합�
 - `-c 32768`: 모델의 컨텍스트 크기를 32,768토큰으로 설정합니다.
 - `-np 1`: 요청 처리 슬롯을 1개로 설정합니다.
 
-컨텍스트 크기와 슬롯 수를 늘리면 메모리 사용량도 증가합니다. 
+컨텍스트 크기와 슬롯 수를 늘리면 메모리 사용량도 증가합니다.
 
 서버 자원에 맞게 `-c`와 `-np` 값을 조정하세요.
 
@@ -272,7 +272,7 @@ curl http://<내부망_IP>:8080/health
 
 #### Rocky Linux 10.1 서버 운영 예시
 
-다음은 Rocky Linux 10.1과 NVIDIA GPU 환경에서 실제로 사용한 명령입니다. 
+다음은 Rocky Linux 10.1과 NVIDIA GPU 환경에서 실제로 사용한 명령입니다.
 
 아래 경로는 사용자 계정를 기준으로 하므로 다른 서버에서는 계정명과 `llama.cpp`설치 경로를 실제 환경에 맞게 변경합니다.
 
@@ -320,7 +320,7 @@ tail -f llama.log
 ```
 
 > [!CAUTION]
-> `pkill -f llama-server`는 이름이 일치하는 모든 llama-server 프로세스를 종료합니다. 
+> `pkill -f llama-server`는 이름이 일치하는 모든 llama-server 프로세스를 종료합니다.
 >
 > 여러 모델 인스턴스를 운영 중이라면 `ps -ef`로 PID를 확인한 뒤 종료할 프로세스만 지정하세요.
 
@@ -386,7 +386,7 @@ python MemoMindAI.py
 
 ### 3-5. 선택 사항: 여러 GPU에 독립 인스턴스 배치
 
-GPU마다 모델 인스턴스를 하나씩 배치할 수 있습니다. 
+GPU마다 모델 인스턴스를 하나씩 배치할 수 있습니다.
 
 아래 예시는 GPU 4개를 각각 8081~8084 포트에 할당합니다.
 
@@ -486,11 +486,13 @@ dist/
 
 ## 5. 속성 변경 방법
 
-기본 설정은 `src/memomind/config.py`, 화면과 채팅 아이콘은 `src/memomind/ui/app.py`에서 관리합니다. 환경변수를 사용하면 소스 코드를 수정하지 않고 현재 터미널에서만 설정을 바꿀 수 있습니다. 변경값을 배포 프로그램의 기본값으로 적용하려면 소스를 수정한 뒤 프로그램을 다시 빌드해야 합니다.
+기본 설정은 `src/memomind/config.py`, 화면과 채팅 아이콘은 `src/memomind/ui/app.py`에서 관리합니다.
+
+환경변수를 사용하면 소스 코드를 수정하지 않고 현재 터미널에서만 설정을 바꿀 수 있습니다. 변경값을 배포 프로그램의 기본값으로 적용하려면 소스를 수정한 뒤 프로그램을 다시 빌드해야 합니다.
 
 ### 5-1. 서버 운영 시 기본 API 주소 변경
 
-`DEFAULT_API_URL`은 MemoMindAI 클라이언트가 접속할 llama.cpp 서버 주소입니다. 
+`DEFAULT_API_URL`은 MemoMindAI 클라이언트가 접속할 llama.cpp 서버 주소입니다.
 
 서버의 수신 주소를 변경하는 설정이 아니므로, 서버에서는 별도로 `--host`와 `--port` 옵션을 지정해야 합니다.
 
@@ -506,7 +508,7 @@ DEFAULT_API_URL = "http://192.168.0.20:8080/v1/chat/completions"
 
 ### 5-2. 다른 모델 사용 시 기본 모델 이름 변경
 
-`DEFAULT_MODEL_NAME`은 MemoMindAI가 API 요청에 담아 보내는 모델 이름입니다. 
+`DEFAULT_MODEL_NAME`은 MemoMindAI가 API 요청에 담아 보내는 모델 이름입니다.
 
 실제로 불러올 모델은 llama.cpp 서버 실행 명령의 `-hf` 또는 `-m` 옵션으로 선택하고, 서버의 `--alias`와 MemoMindAI의 모델 이름을 동일하게 맞춥니다.
 
@@ -527,7 +529,7 @@ DEFAULT_MODEL_NAME = "my-model"
 > [!IMPORTANT]
 > `DEFAULT_MODEL_NAME`만 변경해도 모델 파일이 자동으로 교체되지는 않습니다.
 >
->  llama.cpp 서버에서 사용할 모델과 `--alias`를 함께 변경해야 합니다.
+> llama.cpp 서버에서 사용할 모델과 `--alias`를 함께 변경해야 합니다.
 
 ### 5-3. 앱과 채팅 아이콘 변경
 
@@ -541,7 +543,7 @@ DEFAULT_MODEL_NAME = "my-model"
 | 채팅 사용자 아이콘       | `assets/yang.png`  | `src/memomind/ui/app.py`의 `user_avatar_url`  |
 | 채팅 AI 아이콘           | `assets/korea.png` | `src/memomind/ui/app.py`의 `ai_avatar_url`    |
 
-기존 파일명을 유지하면서 이미지만 교체하면 소스 수정 없이 적용할 수 있습니다. 
+기존 파일명을 유지하면서 이미지만 교체하면 소스 수정 없이 적용할 수 있습니다.
 
 파일명을 변경할 때는 새 이미지 파일을 `assets` 폴더에 넣고 다음 항목을 함께 수정합니다.
 
@@ -579,7 +581,7 @@ flet pack ./MemoMindAI.py \
   --name "MemoMind_v1.0"
 ```
 
-`--add-data "assets:assets"`가 `assets` 폴더 전체를 포함하므로 이미지 파일을 추가해도 이 옵션은 변경하지 않습니다. 
+`--add-data "assets:assets"`가 `assets` 폴더 전체를 포함하므로 이미지 파일을 추가해도 이 옵션은 변경하지 않습니다.
 
 소스 실행 중이라면 앱을 재시작하고, 기존 배포 프로그램이라면 새 아이콘을 포함하여 다시 빌드해야 합니다.
 
@@ -587,50 +589,49 @@ flet pack ./MemoMindAI.py \
 
 ### 6-1. MemoMindAI 소스 코드
 
-이 저장소에서 DAX Lab이 직접 작성한 MemoMindAI 소스 코드는 [MIT License](LICENSE)로 공개합니다. MIT는 OSI가 승인한 오픈소스 소프트웨어 라이선스이며, 저작권 고지와 라이선스 전문을 유지하는 조건으로 사용·복제·수정·병합·배포·재라이선스·판매할 수 있습니다.
+이 저장소의  MemoMindAI 소스 코드는 [MIT License](LICENSE)로 공개합니다.
+
+MIT는 OSI가 승인한 오픈소스 소프트웨어 라이선스이며, 저작권 고지와 라이선스 전문을 유지하는 조건으로 사용·복제·수정·병합·배포·재라이선스·판매할 수 있습니다.
 
 이 라이선스는 MemoMindAI가 호출하는 AI 모델 가중치와 제3자 라이브러리의 라이선스를 변경하지 않습니다. 각 구성요소에는 아래의 개별 라이선스가 적용됩니다.
 
 ### 6-2. AI 모델 활용 명세
 
-| 항목 | 내용 |
-| --- | --- |
-| 활용 유형 | 외부 공개 모델을 추가 학습 없이 사용하는 유형 1 |
-| 기반 모델 | Gemma 4 E2B IT, Google DeepMind |
-| 공개 수준 | 일반 대중이 가중치를 내려받아 로컬·독립 서버에서 구동할 수 있는 오픈웨이트 모델 |
-| 모델 라이선스 | Apache License 2.0 |
-| 공식 원본 | [google/gemma-4-E2B-it](https://huggingface.co/google/gemma-4-E2B-it) |
-| GGUF 배포본 | Q4_0: [ggml-org/gemma-4-E2B-it-GGUF](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · Q4_K_M: [unsloth/gemma-4-E2B-it-GGUF](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) |
-| 추론 엔진 | [llama.cpp](https://github.com/ggml-org/llama.cpp), MIT License |
-| 추가 학습 | 없음. 별도의 학습 데이터셋, 파인튜닝 코드 또는 새 가중치를 생성하지 않음 |
-| 모델 포함 여부 | 저장소와 배포 프로그램에 모델 파일을 포함하지 않으며 사용자가 공개 저장소에서 별도로 내려받음 |
-| 외부 상용 API 의존 | 없음. 기본 구성은 로컬 PC 또는 사용자가 지정한 내부망의 `llama.cpp` 서버에서 독립 구동 |
+| 항목               | 내용                                                                                                                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 활용 유형          | 외부 공개 모델을 추가 학습 없이 사용하는 유형 1                                                                                                                                     |
+| 기반 모델          | Gemma 4 E2B IT, Google DeepMind                                                                                                                                                     |
+| 공개 수준          | 일반 대중이 가중치를 내려받아 로컬·독립 서버에서 구동할 수 있는 오픈웨이트 모델                                                                                                    |
+| 모델 라이선스      | Apache License 2.0                                                                                                                                                                  |
+| 공식 원본          | [google/gemma-4-E2B-it](https://huggingface.co/google/gemma-4-E2B-it)                                                                                                                |
+| GGUF 배포본        | Q4_0:[ggml-org/gemma-4-E2B-it-GGUF](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · Q4_K_M: [unsloth/gemma-4-E2B-it-GGUF](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) |
+| 추론 엔진          | [llama.cpp](https://github.com/ggml-org/llama.cpp), MIT License                                                                                                                      |
+| 추가 학습          | 없음. 별도의 학습 데이터셋, 파인튜닝 코드 또는 새 가중치를 생성하지 않음                                                                                                            |
+| 모델 포함 여부     | 저장소와 배포 프로그램에 모델 파일을 포함하지 않으며 사용자가 공개 저장소에서 별도로 내려받음                                                                                       |
+| 외부 상용 API 의존 | 없음. 기본 구성은 로컬 PC 또는 사용자가 지정한 내부망의`llama.cpp` 서버에서 독립 구동                                                                                             |
 
-Gemma 4는 이전 Gemma 버전에 적용되는 별도 Gemma Terms가 아니라 [Gemma 4 Apache 2.0 라이선스](https://ai.google.dev/gemma/docs/gemma_4_license)가 적용됩니다. 재배포할 때에는 Apache 2.0 전문 제공, 기존 저작권·특허·상표·귀속 고지 유지, 변경 파일의 수정 사실 표시, 원본에 `NOTICE`가 있으면 해당 고지의 보존 등 라이선스 조건을 준수해야 합니다. `Gemma`와 Google 관련 상표의 사용 권한이 부여되는 것은 아닙니다.
+Gemma 4는 이전 Gemma 버전에 적용되는 별도 Gemma Terms가 아니라 [Gemma 4 Apache 2.0 라이선스](https://ai.google.dev/gemma/docs/gemma_4_license)가 적용됩니다.
 
-MemoMindAI는 Gemma 4 E2B IT의 GGUF 양자화본을 텍스트 추론에만 사용하며 `--no-mmproj`로 멀티모달 프로젝터를 사용하지 않습니다. GGUF 변환·양자화는 배포 형식과 정밀도를 바꾸는 것이며, 이 프로젝트는 모델을 파인튜닝하거나 별도의 파생 가중치를 만들지 않습니다.
+재배포할 때에는 Apache 2.0 전문 제공, 기존 저작권·특허·상표·귀속 고지 유지, 변경 파일의 수정 사실 표시, 원본에 `NOTICE`가 있으면 해당 고지의 보존 등 라이선스 조건을 준수해야 합니다.
+
+`Gemma`와 Google 관련 상표의 사용 권한이 부여되는 것은 아닙니다.
+
+MemoMindAI는 Gemma 4 E2B IT의 GGUF 양자화본을 텍스트 추론에만 사용하며 `--no-mmproj`로 멀티모달 프로젝터를 사용하지 않습니다.
+
+GGUF 변환·양자화는 배포 형식과 정밀도를 바꾸는 것이며, 이 프로젝트는 모델을 파인튜닝하거나 별도의 파생 가중치를 만들지 않습니다.
 
 ### 6-3. 직접 의존성 SBOM
 
 아래 표는 `requirements.txt`와 기본 실행 구성에 포함된 직접 의존성입니다. 각 패키지의 저작권 및 라이선스 고지는 해당 공식 저장소와 배포 패키지를 따릅니다.
 
-| 구성요소 | 버전 | 라이선스 | 공식 저장소 | 사용 목적 |
-| --- | ---: | --- | --- | --- |
-| Flet | 0.86.5 | Apache-2.0 | [flet-dev/flet](https://github.com/flet-dev/flet) | 데스크톱 UI 및 이벤트 처리 |
-| TinyDB | 4.9.0 | MIT | [msiemens/tinydb](https://github.com/msiemens/tinydb) | 로컬 JSON 메모 저장·조회 |
-| HTTPX | 0.28.1 | BSD-3-Clause | [encode/httpx](https://github.com/encode/httpx) | `llama.cpp` API 비동기·스트리밍 통신 |
-| PyInstaller | 6.22.0 | GPL-2.0-or-later with Bootloader Exception | [pyinstaller/pyinstaller](https://github.com/pyinstaller/pyinstaller) | Windows·macOS 실행 파일 패키징 |
-| Pillow | 12.3.0 | MIT-CMU | [python-pillow/Pillow](https://github.com/python-pillow/Pillow) | 배포 아이콘·이미지 처리 |
-| llama.cpp | 사용자가 설치한 버전 | MIT | [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) | GGUF 모델 로딩 및 OpenAI 호환 추론 서버 |
-| Gemma 4 E2B IT GGUF | Q4_0 또는 Q4_K_M | Apache-2.0 | [Google 원본](https://huggingface.co/google/gemma-4-E2B-it) · [ggml-org Q4_0](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · [Unsloth Q4_K_M](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) | 공개 가중치 기반 로컬 텍스트 생성 |
+| 구성요소            |                 버전 | 라이선스                                   | 공식 저장소                                                                                                                                                                                              | 사용 목적                               |
+| ------------------- | -------------------: | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Flet                |               0.86.5 | Apache-2.0                                 | [flet-dev/flet](https://github.com/flet-dev/flet)                                                                                                                                                         | 데스크톱 UI 및 이벤트 처리              |
+| TinyDB              |                4.9.0 | MIT                                        | [msiemens/tinydb](https://github.com/msiemens/tinydb)                                                                                                                                                     | 로컬 JSON 메모 저장·조회               |
+| HTTPX               |               0.28.1 | BSD-3-Clause                               | [encode/httpx](https://github.com/encode/httpx)                                                                                                                                                           | `llama.cpp` API 비동기·스트리밍 통신 |
+| PyInstaller         |               6.22.0 | GPL-2.0-or-later with Bootloader Exception | [pyinstaller/pyinstaller](https://github.com/pyinstaller/pyinstaller)                                                                                                                                     | Windows·macOS 실행 파일 패키징         |
+| Pillow              |               12.3.0 | MIT-CMU                                    | [python-pillow/Pillow](https://github.com/python-pillow/Pillow)                                                                                                                                           | 배포 아이콘·이미지 처리                |
+| llama.cpp           | 사용자가 설치한 버전 | MIT                                        | [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp)                                                                                                                                               | GGUF 모델 로딩 및 OpenAI 호환 추론 서버 |
+| Gemma 4 E2B IT GGUF |     Q4_0 또는 Q4_K_M | Apache-2.0                                 | [Google 원본](https://huggingface.co/google/gemma-4-E2B-it) · [ggml-org Q4_0](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · [Unsloth Q4_K_M](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) | 공개 가중치 기반 로컬 텍스트 생성       |
 
 `pip`가 함께 설치하는 전이 의존성은 각 패키지의 배포 메타데이터에 표시된 라이선스를 따릅니다. 배포 전에 실제 빌드 환경의 전체 의존성 목록과 라이선스를 다시 추출하여 고지 파일에 반영해야 합니다.
-
-### 6-4. 라이선스 준수 체크리스트
-
-- MemoMindAI 소스 배포물에 `LICENSE`와 저작권 고지를 포함합니다.
-- 제3자 라이브러리와 모델 파일을 재배포할 경우 해당 라이선스 전문과 필수 고지를 함께 제공합니다.
-- 수정한 Apache-2.0 구성요소를 배포할 경우 변경 사실을 명확히 표시하고, 원본 `NOTICE`가 있으면 보존합니다.
-- 모델·라이브러리 명칭은 출처 설명 용도로만 사용하며 원저작자의 보증이나 제휴를 암시하지 않습니다.
-- 민감한 메모 데이터, API 주소, 로그와 사용자 생성 데이터는 공개 저장소 및 배포 패키지에서 제외합니다.
-- 우수·수상작으로 선정되면 공개 저장소를 수상일로부터 5년간 공개 상태로 유지합니다.
