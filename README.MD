@@ -152,20 +152,21 @@ Apple Silicon용 공식 빌드는 Metal 가속이 기본으로 활성화됩니�
 macOS·Linux:
 
 ```bash
-llama-server -hf ggml-org/gemma-4-E2B-it-GGUF:Q4_0 \
-  --alias gemma-4-e2b-it \
-  --host 127.0.0.1 --port 8080 \
-  --no-mmproj --reasoning off \
-  -c 32768 -np 1
+llama-server -hf ggml-org/gemma-4-E2B-it-GGUF \   
+  --reasoning off \     
+  --host 0.0.0.0 \            
+  --no-mmproj \              
+  -c 32768 \  
+  -np 1
 ```
 
 Windows PowerShell:
 
 ```powershell
-llama-server.exe -hf ggml-org/gemma-4-E2B-it-GGUF:Q4_0 `
-  --alias gemma-4-e2b-it `
-  --host 127.0.0.1 --port 8080 `
-  --no-mmproj --reasoning off `
+llama-server.exe -hf ggml-org/gemma-4-E2B-it-GGUF `
+  --host 0.0.0.0 `
+  --reasoning off `
+  --no-mmproj `
   -c 32768 -np 1
 ```
 
@@ -632,6 +633,6 @@ GGUF 변환·양자화는 배포 형식과 정밀도를 바꾸는 것이며, 이
 | llama.cpp           | 사용자가 설치한 버전 | MIT                                        | [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp)                                                                                                                                               | GGUF 모델 로딩 및 OpenAI 호환 추론 서버 |
 | Gemma 4 E2B IT GGUF |     Q4_0 또는 Q4_K_M | Apache-2.0                                 | [Google 원본](https://huggingface.co/google/gemma-4-E2B-it) · [ggml-org Q4_0](https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF) · [Unsloth Q4_K_M](https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF) | 공개 가중치 기반 로컬 텍스트 생성       |
 
-`pip`가 함께 설치하는 전이 의존성은 각 패키지의 배포 메타데이터에 표시된 라이선스를 따릅니다. 
+`pip`가 함께 설치하는 전이 의존성은 각 패키지의 배포 메타데이터에 표시된 라이선스를 따릅니다.
 
 배포 전에 실제 빌드 환경의 전체 의존성 목록과 라이선스를 다시 추출하여 고지 파일에 반영해야 합니다.
