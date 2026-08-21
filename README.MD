@@ -152,22 +152,13 @@ Apple Silicon용 공식 빌드는 Metal 가속이 기본으로 활성화됩니�
 macOS·Linux:
 
 ```bash
-llama-server -hf ggml-org/gemma-4-E2B-it-GGUF \   
-  --reasoning off \     
-  --host 0.0.0.0 \            
-  --no-mmproj \              
-  -c 32768 \  
-  -np 1
+llama-server -hf ggml-org/gemma-4-E2B-it-GGUF --reasoning off --host 0.0.0.0 --no-mmproj -c 32768 -np 1
 ```
 
 Windows PowerShell:
 
 ```powershell
-llama-server.exe -hf ggml-org/gemma-4-E2B-it-GGUF `
-  --host 0.0.0.0 `
-  --reasoning off `
-  --no-mmproj `
-  -c 32768 -np 1
+llama-server.exe -hf ggml-org/gemma-4-E2B-it-GGUF --host 0.0.0.0 --reasoning off --no-mmproj -c 32768 -np 1
 ```
 
 MemoMindAI는 텍스트만 사용하므로 `--no-mmproj`로 이미지용 projector 다운로드를 생략합니다.`--reasoning off`는 모델의 추론 단계를 답변에 노출하지 않도록 설정합니다.
